@@ -8,7 +8,8 @@ typedef enum {
   Option_H = 2,
   Option_N = 4,
   Option_F = 8,
-  Option_L = 16
+  Option_L = 16,
+  Option_6 = 32
 } Option;
 
 #define BUFSIZE 1024
@@ -28,6 +29,7 @@ typedef struct {
   char *login;
   char *host;
   int port;
+  int ipv6;
 } Param;
 
 /* Definice chyb */

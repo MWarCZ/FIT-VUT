@@ -27,13 +27,15 @@ Param ServerApp(int argc, char** argv) {
   param.login = NULL;
   param.host = NULL;
   param.port = 0;
+  param.ipv6 = 0;
 
   Option p = Option_None;
+  Option ipv6 = Option_None;
   int pValue = 0;
 
   int opt;
   
-  while( (opt=getopt( argc,(char* const*) argv, "p:" )) != -1 ) {
+  while( (opt=getopt( argc,(char* const*) argv, "p:6" )) != -1 ) {
 
     switch(opt) {
 
@@ -57,6 +59,13 @@ Param ServerApp(int argc, char** argv) {
         char *tmp = NULL;
         pValue = (int)strtol(optarg, &tmp, 10 );
         
+        break;
+      case '6':
+        // Duplicitne zadany parametr
+        if( ipv6 ) { /// err
+          DIE(Error_InputArgs, "Duplicitne zadany prepinac: 6\n");
+        }
+        ipv6 |= Option_6;
         break;
 
       case ':': // Kdyz neco chybi - hodnota
@@ -87,17 +96,24 @@ Param ServerApp(int argc, char** argv) {
 
   
   param.port = pValue;
+  if( ipv6 & Option_6 ) {
+    param.ipv6 = 1;
+  }
 
   return param;
 }
 
 
 //
-int OpenServer(int portNumber, int* welcomeSocket) {
+int OpenServer(int portNumber, int* welcomeSocket, int ipv6) {
   int rc;
-  struct sockaddr_in6 sa;
+  struct sockaddr_in6 sa6;
+  struct sockaddr_in sa4;
+  struct sockaddr* psa;
 
-  if ((*welcomeSocket = socket(PF_INET6, SOCK_STREAM, 0)) < 0) {
+  int pf_inet_4x6 = (ipv6)?PF_INET6:PF_INET;
+
+  if ((*welcomeSocket = socket(pf_inet_4x6, SOCK_STREAM, 0)) < 0) {
     DIE(Error_CreateServer, "Chyba pri vytvareni socketu.\n");
   }
   
@@ -108,12 +124,22 @@ int OpenServer(int portNumber, int* welcomeSocket) {
     DIE(Error_CreateServer, "Chyba pri nastavovani socketu.\n");
   }
   
-  memset(&sa,0,sizeof(sa));
-  sa.sin6_family = AF_INET6;
-  sa.sin6_addr = in6addr_any;
-  sa.sin6_port = htons(portNumber);  
+  if(ipv6) {
+    memset(&sa6,0,sizeof(sa6));
+    sa6.sin6_family = AF_INET6;
+    sa6.sin6_addr = in6addr_any;
+    sa6.sin6_port = htons(portNumber); 
+    psa = (struct sockaddr*)&sa6;
+  } 
+  else {
+    memset(&sa4,0,sizeof(sa4));
+    sa4.sin_family = AF_INET;
+    sa4.sin_addr.s_addr = htonl(INADDR_ANY);
+    sa4.sin_port = htons(portNumber); 
+    psa = (struct sockaddr*)&sa4;
+  }
 
-  if ((rc = bind(*welcomeSocket, (struct sockaddr*)&sa, sizeof(sa))) < 0) {
+  if ((rc = bind(*welcomeSocket, psa, sizeof(*psa))) < 0) {
     DIE(Error_CreateServer, "Chyba pri otvirani portu. ( bind )\n");
   }
     
@@ -219,13 +245,24 @@ int SendHomeDir(int* comSocket, char* login ) {
 
 
 //
-int MainServer(int * welcomeSocket) {
-  struct sockaddr_in6 saClient;
+int MainServer(int * welcomeSocket, int ipv6) {
+  struct sockaddr_in6 saClient6;
+  struct sockaddr_in saClient4;
   char str[INET6_ADDRSTRLEN];
-  socklen_t saClientLen = sizeof(saClient);
+  struct sockaddr* psaClient;
+  socklen_t saClientLen;
+
+  if(ipv6) {
+    psaClient = (struct sockaddr*)&saClient6;
+    saClientLen = sizeof(saClient6);
+  }
+  else {
+    psaClient = (struct sockaddr*)&saClient4;
+    saClientLen = sizeof(saClient4);
+  }
   
   while(1) {
-    int comSocket = accept(*welcomeSocket, (struct sockaddr*)&saClient, &saClientLen); 
+    int comSocket = accept(*welcomeSocket, psaClient, &saClientLen); 
 
     if (comSocket <= 0)
       continue;
@@ -240,8 +277,15 @@ int MainServer(int * welcomeSocket) {
       INFO("\n############################\n");  
       INFO("%d: Nove pripojeni - Vytvoren obsluzny proces %d.\n", child_pid, child_pid);
 
-      if(inet_ntop(AF_INET6, &saClient.sin6_addr, str, sizeof(str))) {
-        INFO("%d: Klient: %s:%d\n",child_pid, str, htons(saClient.sin6_port) );
+      if(ipv6) {
+        if(inet_ntop(AF_INET6, &saClient6.sin6_addr, str, sizeof(str))) {
+          INFO("%d: Klient: %s:%d\n",child_pid, str, htons(saClient6.sin6_port) );
+        }
+      }
+      else {
+        if(inet_ntop(AF_INET, &saClient4.sin_addr, str, sizeof(str))) {
+          INFO("%d: Klient: %s:%d\n",child_pid, str, htons(saClient4.sin_port) );
+        }
       }
       
       char buff[BUFSIZE];
@@ -324,11 +368,11 @@ int main(int argc, char** argv) {
 
   INFO("Zapinani serveru...\n");
 
-  OpenServer(param.port, &welcomeSocket);
+  OpenServer(param.port, &welcomeSocket, param.ipv6);
 
   INFO("Server spusten na portu: %d\n", param.port);
 
-  MainServer(&welcomeSocket);
+  MainServer(&welcomeSocket, param.ipv6);
 
   INFO("Vypinani serveru.\n");
 

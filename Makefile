@@ -5,6 +5,9 @@ CC=gcc
 NAME=forkme
 DEBUG_FLAG=
 
+CLIENT_O=global.o ipk-client.o
+SERVER_O=global.o ipk-server.o
+
 .PHONY: clean all
 
 all: ipk-client ipk-server
@@ -13,30 +16,24 @@ debug: CFLAGS += -DDEBUG -g
 debug: debug.h all
 
 clean:
-	rm ipk-client;
-	rm ipk-server;
-	rm ipk-client.o;
-	rm ipk-server.o;
-	rm global.o;
+	rm -f ipk-client;
+	rm -f ipk-server;
+	rm -f ipk-client.o;
+	rm -f ipk-server.o;
+	rm -f global.o;
 
-global.o: CFLAGS += -c 
 global.o: global.c global.h protokol.h
-	$(CC) $(CFLAGS) $(DEBUG_FLAG) -o $@ $<
+	$(CC) $(CFLAGS) -c $(DEBUG_FLAG) -o $@ $<
 
-ipk-client.o: CFLAGS += -c 
 ipk-client.o: ipk-client.c  protokol.h
-	$(CC) $(CFLAGS) $(DEBUG_FLAG) -o $@ $<
+	$(CC) $(CFLAGS) -c $(DEBUG_FLAG) -o $@ $<
 
-ipk-server.o: CFLAGS += -c 
 ipk-server.o: ipk-server.c  protokol.h
-	$(CC) $(CFLAGS) $(DEBUG_FLAG) -o $@ $<
+	$(CC) $(CFLAGS) -c $(DEBUG_FLAG) -o $@ $<
 
-ipk-client: global.o ipk-client.o
-	$(CC) $(CFLAGS) $(DEBUG_FLAG) -o $@ $^
+ipk-client: $(CLIENT_O)
+	$(CC) $(CFLAGS) $(DEBUG_FLAG) -o $@ $(CLIENT_O)
 
-ipk-server: global.o ipk-server.o
-	$(CC) $(CFLAGS) $(DEBUG_FLAG) -o $@ $^
-
-%.o: %.c
-	$(CC) $(CFLAGS) $(DEBUG_FLAG) -o $@ $<
+ipk-server: $(SERVER_O)
+	$(CC) $(CFLAGS) $(DEBUG_FLAG) -o $@ $(SERVER_O)
 
