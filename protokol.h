@@ -1,4 +1,7 @@
 
+#ifndef __PROTOKOL_H__
+#define __PROTOKOL_H__
+
 /* Definice protokolu */
 
 #define P_NAME "mwarcz"
@@ -63,3 +66,4 @@
 
 //---------
 
+#endif

@@ -1,4 +1,7 @@
 
+#ifndef __GLOBAL_H__
+#define __GLOBAL_H__
+
 typedef enum {
   Option_None = 0,
   Option_P = 1,
@@ -35,10 +38,23 @@ typedef enum {
   Error_CreateServer = 2,
   Error_RunTimeServer = 3,
   Error_ConnectToServer = 4,
-  
+  Error_Send = 5,
+  Error_Recv = 6,
+
   Error_Unknown = 99
 } Error;
 
 #define DIE(exitCode,msg,...) fprintf(stderr, msg, ##__VA_ARGS__); exit(exitCode);
 
 #define INFO(msg,...) fprintf(stderr, msg, ##__VA_ARGS__);
+
+/* funkce */
+
+int CheckNumber(char* str);
+int SendMsg(int* socket, char* buff);
+int RecvMsg(int* socket, char* buff);
+int SendOK(int* socket);
+int SendKO(int* socket);
+int SendAndWait(int *socket, char* inputBuff, char* outputBuff);
+
+#endif

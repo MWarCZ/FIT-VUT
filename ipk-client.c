@@ -17,32 +17,6 @@
 #include "debug.h"
 
 
-/**
- * Zkontroluje jestli je textovy string cislo ci nikoli.
- * @param  str Textovy retezec, ktery muze byt cislem.
- * @return     Vraci 1 pokud str je cislo, jinak 0.
- */
-int CheckNumber(char* str) {
-  int len = strlen(str);
-  for(int i = 0; i < len; i++ ) {
-    if(isdigit(str[i]) == 0)
-      return 0;
-  }
-  return 1;
-}
-
-
-void SendOK(int* comSocket) {
-  char* msgEnd = PROT_SUCC_RES;
-  send(*comSocket, msgEnd, strlen(msgEnd), 0);
-}
-
-void SendKO(int* comSocket) {
-  char* msgEnd = PROT_FAIL_RES;
-  send(*comSocket, msgEnd, strlen(msgEnd), 0);
-}
-
-
 // ./ipk-client -h host -p port [-n|-f|-l] login
 Param ClientApp(int argc, char** argv) {
   Param param;
@@ -134,8 +108,6 @@ Param ClientApp(int argc, char** argv) {
 
       // '-l prefix_login'
       case 'l':
-        debug("l: %s\n", optarg);
-        
         // Jiz byl zadan jiny prepinac '-n','-f','-l'
         if(nfl) { /// err
           DIE(Error_InputArgs, "Duplicitne zadany prepinac: n, f, l\n");
@@ -246,17 +218,11 @@ void MainClient(int* clientSocket, Action action, const char* login) {
   debug(">%s\n",buff);
 
   // Odeslani zadosti serveru
-  request = send(*clientSocket, buff, strlen(buff), 0);
-  if (request < 0) {
-    DIE(1,"ERROR in send\n");
-  }
+  request = SendMsg(clientSocket, buff);
 
   unsigned int recv_counter = 1;
   while(recv_counter) {
-    reply = recv(*clientSocket, buff, BUFSIZE, 0);
-    if (reply < 0) {
-      DIE(1,"ERROR in recv\n");
-    }
+    reply = RecvMsg(clientSocket, buff);
     buff[reply] = '\0';
 
     // Server ukoncil komunikaci uspesne
@@ -274,7 +240,7 @@ void MainClient(int* clientSocket, Action action, const char* login) {
     switch(action) {
       case Action_GetUserInfo:
         if(recv_counter == 1) {
-          printf("%s,", buff);
+          //printf("Login: %s/n", buff);
         }
         else if(recv_counter == 2) {
           //printf("UID: %s,", buff);
@@ -299,11 +265,6 @@ void MainClient(int* clientSocket, Action action, const char* login) {
 
     // Odeslani potvrzeni serveru, ze data dorazila a muze posilat dalsi.
     SendOK(clientSocket);
-    //snprintf( buff, sizeof(buff), PROT_SUCC_RES);
-    //request = send(*clientSocket, buff, strlen(buff), 0);
-    //if (request < 0) {
-    //  DIE(1,"ERROR in send\n");
-    //}
 
     recv_counter++;
   } // while(recv_counter)

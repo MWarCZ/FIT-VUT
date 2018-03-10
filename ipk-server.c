@@ -1,9 +1,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <string.h>//
 #include <fcntl.h>
-#include <errno.h>
+#include <errno.h>//
 #include <sys/select.h>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -11,7 +11,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <pwd.h>
-#include <ctype.h>
+#include <ctype.h> //
 
 
 #include "protokol.h"
@@ -19,46 +19,6 @@
 
 #include "debug.h"
 
-/// DEBUG
-#ifdef DEBUG
-#include <sys/wait.h>
-#include <signal.h>
-#endif
-
-/**
- * Zkontroluje jestli je textovy string cislo ci nikoli.
- * @param  str Textovy retezec, ktery muze byt cislem.
- * @return     Vraci 1 pokud str je cislo, jinak 0.
- */
-int CheckNumber(char* str) {
-  int len = strlen(str);
-  for(int i = 0; i < len; i++ ) {
-    if(isdigit(str[i]) == 0)
-      return 0;
-  }
-  return 1;
-}
-
-
-void SendOK(int* comSocket) {
-  char* msgEnd = PROT_SUCC_RES;
-  send(*comSocket, msgEnd, strlen(msgEnd), 0);
-}
-
-void SendKO(int* comSocket) {
-  char* msgEnd = PROT_FAIL_RES;
-  send(*comSocket, msgEnd, strlen(msgEnd), 0);
-}
-
-int SendAndWait(int *comSocket, char* str) {
-  char buff[BUFSIZE];
-  int res = 0;
-
-  send(*comSocket, str, strlen(str), 0);
-  res = recv(*comSocket, buff, BUFSIZE, 0);
-
-  return res;
-}
 
 // ./ipk-server -p port 
 Param ServerApp(int argc, char** argv) {
@@ -165,7 +125,8 @@ int OpenServer(int portNumber, int* welcomeSocket) {
 }
 
 // -n značí, že bude vráceno plné jméno uživatele včetně případných dalších informací pro uvedený login (User ID Info);
-void SendUserInfo(int* comSocket, char* login) {
+int SendUserInfo(int* comSocket, char* login) {
+  int result = 0;
   struct passwd *pw;
   char buff[BUFSIZE];
   int res = 0;
@@ -185,30 +146,30 @@ void SendUserInfo(int* comSocket, char* login) {
 
     // Odesilani dat
 
-    // Full name
-    send(*comSocket, pw->pw_name, strlen(pw->pw_name), 0);
-    res = recv(*comSocket, buff, BUFSIZE,0); 
+    // Login
+    res = SendAndWait(comSocket, pw->pw_name, buff);
 
     // UID
     snprintf( buff, sizeof(buff), "%i",pw->pw_uid);
-    send(*comSocket, buff, strlen(buff), 0);
-    res = recv(*comSocket, buff, BUFSIZE,0); 
+    res = SendAndWait(comSocket, buff, buff);
 
-    // Gecos
-    send(*comSocket, pw->pw_gecos, strlen(pw->pw_gecos), 0);
-    res = recv(*comSocket, buff, BUFSIZE,0); 
+    // Gecos - Name + Info
+    res = SendAndWait(comSocket, pw->pw_gecos, buff);
 
     SendOK(comSocket);
+    result = 1;
   }
   else {
     // login nenalezen
     SendKO(comSocket);
+    result = 0;
   }
 
   endpwent();
+  return result;
 }
 
-void SendUsersList(int* comSocket, char* login) {
+int SendUsersList(int* comSocket, char* login) {
   struct passwd *pw;
   char buff[BUFSIZE];
   int res = 0;
@@ -218,18 +179,19 @@ void SendUsersList(int* comSocket, char* login) {
     if( strncmp(login, pw->pw_name, strlen(login) ) == 0 ) {
       snprintf( buff, sizeof(buff), "%s",pw->pw_name );
       debug(">%s\n", buff);
-      send(*comSocket, buff, strlen(buff), 0);
-      res = recv(*comSocket, buff, BUFSIZE,0); 
+      res = SendAndWait(comSocket, buff, buff);
     }
 
   }  
   endpwent();
 
   SendOK(comSocket);
+  return 1;
 }
 
 // -f značí, že bude vrácena informace o domácím adresáři uživatele pro uvedený login (Home directory);
-void SendHomeDir(int* comSocket, char* login ) {
+int SendHomeDir(int* comSocket, char* login ) {
+  int result = 0;
   struct passwd *pw;
   char buff[BUFSIZE];
   int res = 0;
@@ -239,39 +201,28 @@ void SendHomeDir(int* comSocket, char* login ) {
   if( (pw = getpwnam( login ))!=(struct passwd *)0 ) {
     // login nalezen
     debug(">%s\n", pw->pw_dir);
-    send(*comSocket, pw->pw_dir, strlen(pw->pw_dir), 0);
-
-    res = recv(*comSocket, buff, BUFSIZE,0);
+    res = SendAndWait(comSocket, pw->pw_dir, buff);
 
     SendOK(comSocket);
+    result = 1;
   }
   else {
     // login nenalezen
     debug(">Login '%s' nenalezen.\n", login);
     SendKO(comSocket);
+    result = 0;
   }
 
   endpwent();
+  return result;
 }
 
-/// DEBUG
-#ifdef DEBUG
-void *SigCatcher(int n) {
-  int pid = wait3(NULL,WNOHANG,NULL);
-  printf("--------------------\nChild %d spawned.\n",pid);
-}
-#endif
 
 //
 int MainServer(int * welcomeSocket) {
   struct sockaddr_in6 saClient;
   char str[INET6_ADDRSTRLEN];
   socklen_t saClientLen = sizeof(saClient);
-
-/// DEBUG
-#ifdef DEBUG
-  signal(SIGCHLD,(__sighandler_t)SigCatcher);
-#endif
   
   while(1) {
     int comSocket = accept(*welcomeSocket, (struct sockaddr*)&saClient, &saClientLen); 
@@ -286,7 +237,7 @@ int MainServer(int * welcomeSocket) {
     
     if (pid == 0) {
       int child_pid = getpid(); 
-      INFO("______________________________\n");  
+      INFO("\n############################\n");  
       INFO("%d: Nove pripojeni - Vytvoren obsluzny proces %d.\n", child_pid, child_pid);
 
       if(inet_ntop(AF_INET6, &saClient.sin6_addr, str, sizeof(str))) {
