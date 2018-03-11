@@ -1,26 +1,33 @@
+/////////////////////////////
+/// Soubor: ipk-server.c  ///
+/// Autor: Miroslav Valka ///
+/////////////////////////////
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>//
-#include <fcntl.h>
-#include <errno.h>//
-#include <sys/select.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <ctype.h>
 #include <pwd.h>
-#include <ctype.h> //
-
+#include <fcntl.h>
 
 #include "protokol.h"
 #include "global.h"
 
 #include "debug.h"
 
-
 // ./ipk-server -p port 
+
+/**
+ * Funkce zpracuje parametry a zkontroluje kombinace parametru a existenci hodnot parametru.
+ * @param  argc Pocet argumentu prikazove radky.
+ * @param  argv Argumenty prikazove radky.
+ * @return      Vraci strukturu Param, ktera obsahuje nactene hodnoty parametru.
+ */
 Param ServerApp(int argc, char** argv) {
   Param param;
   param.action = Action_None;
@@ -103,9 +110,13 @@ Param ServerApp(int argc, char** argv) {
   return param;
 }
 
-
-//
-int OpenServer(int portNumber, int* welcomeSocket, int ipv6) {
+/**
+ * Funkce vytvori socket serveru na danem portu zahaji naslouchani na danem portu.
+ * @param  portNumber    Cislo portu.
+ * @param  welcomeSocket Ukazatel na socket na kterem bude otevrena komunikace.
+ * @param  ipv6          Pri hodnote 0 bude vytvorena IPv4 komunikace, pokud bude hodnota nenulova bude vytvorena IPv6 komunikace.
+ */
+void OpenServer(int portNumber, int* welcomeSocket, int ipv6) {
   int rc;
   struct sockaddr_in6 sa6;
   struct sockaddr_in sa4;
@@ -146,11 +157,14 @@ int OpenServer(int portNumber, int* welcomeSocket, int ipv6) {
   if ((rc = listen(*welcomeSocket, 1)) < 0) {
     DIE(Error_CreateServer, "Chyba pri naslouchani na portu. ( listen )\n");  
   }
-
-  return 0;
 }
 
-// -n značí, že bude vráceno plné jméno uživatele včetně případných dalších informací pro uvedený login (User ID Info);
+/**
+ * Funkce nacte a odesle plné jméno uživatele včetně případných dalších informací pro uvedený login.
+ * @param  comSocket Socket pres ktery se komunikule s klientem.
+ * @param  login     Login podle ktereho bude hledan uzivatel.
+ * @return           Vraci nenulovou hodnotu pokud vse probehne spravne jinak vraci nulu.
+ */
 int SendUserInfo(int* comSocket, char* login) {
   int result = 0;
   struct passwd *pw;
@@ -195,6 +209,12 @@ int SendUserInfo(int* comSocket, char* login) {
   return result;
 }
 
+/**
+ * Funkce nacte a odesle loginy se zadanym prefixem.
+ * @param  comSocket Socket pres ktery se komunikule s klientem.
+ * @param  login     Prefix logunu, ktere budou odesilani.
+ * @return           Vraci nenulovou hodnotu pokud vse probehne spravne jinak vraci nulu.
+ */
 int SendUsersList(int* comSocket, char* login) {
   struct passwd *pw;
   char buff[BUFSIZE];
@@ -215,7 +235,12 @@ int SendUsersList(int* comSocket, char* login) {
   return 1;
 }
 
-// -f značí, že bude vrácena informace o domácím adresáři uživatele pro uvedený login (Home directory);
+/**
+ * Funkce nacte a odesle informace o domacim adresari uzivatele pro uvedený login.
+ * @param  comSocket Socket pres ktery se komunikule s klientem.
+ * @param  login     Login podle ktereho bude hledan uzivatel.
+ * @return           Vraci nenulovou hodnotu pokud vse probehne spravne jinak vraci nulu.
+ */
 int SendHomeDir(int* comSocket, char* login ) {
   int result = 0;
   struct passwd *pw;
@@ -244,8 +269,13 @@ int SendHomeDir(int* comSocket, char* login ) {
 }
 
 
-//
-int MainServer(int * welcomeSocket, int ipv6) {
+/**
+ * Hlavni funkce serverove aplikace. Ve smycce ceka na zadosti od klientu.
+ * Pro kazdeho klienta pote vytvori proces, ktery klienta obslouzi.
+ * @param  welcomeSocket Socket na kterem je otevrena komunikace.
+ * @param  ipv6          Oznamuje jestli server pracuje s ipv4 nevo ipv6.
+ */
+void MainServer(int * welcomeSocket, int ipv6) {
   struct sockaddr_in6 saClient6;
   struct sockaddr_in saClient4;
   char str[INET6_ADDRSTRLEN];
@@ -359,7 +389,7 @@ int MainServer(int * welcomeSocket, int ipv6) {
 }
 
 
-//main
+// main
 int main(int argc, char** argv) {
 
   Param param = ServerApp(argc, argv);
@@ -379,3 +409,4 @@ int main(int argc, char** argv) {
   return 0;
 }
 
+/// KonecSouboru: ipk-server.c

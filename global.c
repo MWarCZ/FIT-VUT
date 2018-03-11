@@ -1,3 +1,7 @@
+/////////////////////////////
+/// Soubor: global.c      ///
+/// Autor: Miroslav Valka ///
+/////////////////////////////
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,11 +15,6 @@
 #include "global.h"
 
 
-/**
- * Zkontroluje jestli je textovy string cislo ci nikoli.
- * @param  str Textovy retezec, ktery muze byt cislem.
- * @return     Vraci 1 pokud str je cislo, jinak 0.
- */
 int CheckNumber(char* str) {
   int len = strlen(str);
   for(int i = 0; i < len; i++ ) {
@@ -60,3 +59,4 @@ int SendAndWait(int *socket, char* inputBuff, char* outputBuff) {
   return res;
 }
 
+/// KonecSouboru: global.c

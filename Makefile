@@ -7,6 +7,7 @@ DEBUG_FLAG=
 
 CLIENT_O=global.o ipk-client.o
 SERVER_O=global.o ipk-server.o
+ZIP_FILES=Makefile ipk-client.c ipk-server.c global.c global.h protokol.h debug.h dokumentace.md README.md .editorconfig
 
 .PHONY: clean all
 
@@ -21,6 +22,7 @@ clean:
 	rm -f ipk-client.o;
 	rm -f ipk-server.o;
 	rm -f global.o;
+	rm -f xvalka05.zip
 
 global.o: global.c global.h protokol.h
 	$(CC) $(CFLAGS) -c $(DEBUG_FLAG) -o $@ $<
@@ -36,4 +38,8 @@ ipk-client: $(CLIENT_O)
 
 ipk-server: $(SERVER_O)
 	$(CC) $(CFLAGS) $(DEBUG_FLAG) -o $@ $(SERVER_O)
+
+zip: $(ZIP_FILES)
+	zip xvalka05.zip $(ZIP_FILES)
+
 

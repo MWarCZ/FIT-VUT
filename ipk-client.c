@@ -1,23 +1,33 @@
-
+/////////////////////////////
+/// Soubor: ipk-clietn.c  ///
+/// Autor: Miroslav Valka ///
+/////////////////////////////
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
-#include <netdb.h>
-#include <arpa/inet.h>
 #include <netinet/in.h>
 #include <unistd.h>
+#include <arpa/inet.h>
 #include <ctype.h>
+#include <netdb.h>
+
 
 #include "protokol.h"
 #include "global.h"
 
 #include "debug.h"
 
-
 // ./ipk-client -h host -p port [-n|-f|-l] login
+
+/**
+ * Funkce zpracuje parametry a zkontroluje kombinace parametru a existenci hodnot parametru.
+ * @param  argc Pocet argumentu prikazove radky.
+ * @param  argv Argumenty prikazove radky.
+ * @return      Vraci strukturu Param, ktera obsahuje nactene hodnoty parametru.
+ */
 Param ClientApp(int argc, char** argv) {
   Param param;
   param.action = Action_None;
@@ -165,33 +175,40 @@ Param ClientApp(int argc, char** argv) {
 }
 
 
-//
+/**
+ * Funkce navaze spojeni se serverem.
+ * @param serverHostname Jmeno/adresa serveru.
+ * @param portNumber     Cislo portu.
+ * @param clientSocket   Ukazatel na socket ktery bude otevren.
+ */
 void OpenClient(const char *serverHostname, int portNumber, int* clientSocket) {
   struct hostent *server;
   struct sockaddr_in serverAddress;
 
-  /* 2. ziskani adresy serveru pomoci DNS */
   if ((server = gethostbyname(serverHostname)) == NULL) {
     DIE(Error_ConnectToServer,"Host '%s' nebyl nalezen.\n", serverHostname);
   }
-    
-  /* 3. nalezeni IP adresy serveru a inicializace struktury serverAddress */
+
   bzero( (char *)&serverAddress, sizeof(serverAddress) );
   serverAddress.sin_family = AF_INET;
   bcopy( (char *)server->h_addr, (char *)&serverAddress.sin_addr.s_addr, server->h_length );
   serverAddress.sin_port = htons(portNumber);
-    
-  /* Vytvoreni soketu */
+
   if ((*clientSocket = socket(AF_INET, SOCK_STREAM, 0)) <= 0) {
     DIE(Error_ConnectToServer,"Nepodarilo se vytvorit socket. ( socket )\n");
   }
-  
+
   if (connect(*clientSocket, (const struct sockaddr *)&serverAddress, sizeof(serverAddress)) != 0) { 
     DIE(Error_ConnectToServer,"Nepodarilo se navazat spojeni se serverem. ( connect )\n");     
   }
-
 }
 
+/**
+ * Hlavni funkce klientske aplikace. Komunikuje se serverem a zpracovava data od serveru.
+ * @param clientSocket Ukazatel na otevreny socket.
+ * @param action       Akce kterou bude klient vykonavat.
+ * @param login        Data, ktera budou posilana serveru. (login uzivatele / prefix loginu)
+ */
 void MainClient(int* clientSocket, Action action, const char* login) {
   int bytestx, bytesrx;
   int request, reply;
@@ -200,6 +217,7 @@ void MainClient(int* clientSocket, Action action, const char* login) {
   //mwarcz:01:%c:%s
   //0-6:7-9:10-11:12-res
 
+  // Nastaveni odesilane zpravy zadosti.
   switch(action) {
     case Action_GetUserInfo: 
       snprintf( buff, sizeof(buff), "%s%s", PROT_REQ_GET_USER_INFO,login );
@@ -233,6 +251,7 @@ void MainClient(int* clientSocket, Action action, const char* login) {
     // Server ukoncil komunikaci neuspesne
     else if( strcmp(&buff[0], PROT_FAIL_RES) == 0 ) {
       debug(">KO odpoved.\n");
+      INFO("Server odmitl poslat data.\n");
       break;
     }
 
@@ -268,18 +287,15 @@ void MainClient(int* clientSocket, Action action, const char* login) {
 
     recv_counter++;
   } // while(recv_counter)
-
-
 }
 
 
-//main
+// main
 int main(int argc, char** argv) {
 
   Param param = ClientApp(argc, argv);
 
   int clientSocket;
-
 
   // Otevreni pripojeni
   OpenClient( param.host, param.port, &clientSocket);
@@ -291,3 +307,5 @@ int main(int argc, char** argv) {
 
   return 0;
 }
+
+/// KonecSouboru: ipk-client.c 
