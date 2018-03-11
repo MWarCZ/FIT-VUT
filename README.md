@@ -57,6 +57,7 @@ Pro kompilaci stačí použít nástroj `make`. Dodaný [Makefile](Makefile) je 
 - `ipk-client` - Zkompiluje klientskou aplikaci.
 - `ipk-server` - Zkompiluje serverovou aplikaci.
 - `clean` - Smaže zkompilované binární soubory.
+- `zip` - Zabalí zdrojové soubory a dokumentační soubory do archivu zip.
 > Všechny cíle až na `debug` jsou kompatibilní s GNU i BSD make. 
 > Cíl `debug` je kompatibilní jen s GNU make.
 
