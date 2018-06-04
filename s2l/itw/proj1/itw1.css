@@ -1,0 +1,342 @@
+
+* {
+	font-family: Arial;
+	font-size: 11pt;
+	color: #585858;
+
+    background-repeat: no-repeat;
+}
+h1,h2,em {
+	font-family: Times New Roman;
+}
+h2 {
+	margin: 2.5em auto 1.5em auto;
+}
+h2,em {
+	font-size: 3.5em;
+    font-style: italic;
+    font-weight: normal;
+    text-align: center;
+}
+h3 {
+	font-size: 1.5em;
+}
+body, h1 {
+	margin: 0;
+}
+
+p {
+	line-height: 1.5em;
+}
+a {
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: underline;
+}
+
+#page {
+	min-width: 650px;
+	max-width: 1920px;
+    margin: auto;
+}
+.content, #head .bg{
+	max-width: 1320px;
+	margin: auto;
+}
+
+/* ------------------------ */
+
+#head {
+	background-image: url("images/topfoto.jpg");
+	background-position: center;
+	padding-bottom: 495px;
+	overflow: hidden;
+}
+#head .bg {
+    width: 100%;
+    height: 7em;
+    margin-top: 1.2em;
+	background: gray;
+    opacity: 0.6;
+}
+#head .content {
+	position: relative;
+	top: -7.5em;
+    height: 7em;
+}
+#head .content * {
+	display: inline-block;
+}
+#head #hh1 a {
+	background-image: url("images/logo.png");
+	height: 60px;
+    width: 150px;
+    margin-left: 2em;
+    margin-top: 2em;
+}
+#head #hh1 a span {
+	color: transparent;
+}
+#head .content {
+	overflow: visible; 
+}
+#head .content #menu {
+	position: absolute;
+    right: 0px;
+    top: 0px;
+    height: 8em;
+}
+
+#head .inside .main {
+	line-height: 8em;
+    margin: 0px;
+    padding: 0px;
+    vertical-align: top;
+}
+#head .inside ul.main li a, #head .inside #curlang, #head .inside #lang ul li a {
+    font-size: 1.3em;
+}
+
+#head .inside ul.main li a {
+	padding: 0 0.5em;
+    color: white;
+}
+#head .inside ul.main li a:hover {
+	text-shadow: black 3px 3px 5px;
+}
+
+#head .inside #lang {
+	line-height: 8em;
+	padding-right: 1.5em;
+}
+
+#head .inside #curlang {
+	padding: 0 1.2em 0 1em;
+    background-image: url("images/select.png");
+    background-position: center right;
+    cursor: pointer;
+}
+#head .inside #lang ul {    
+	display: block;
+    margin: 0px;
+    padding: 0.5em 0em;
+    position: relative;
+    top: -45px;
+    left: 10px;
+    line-height: 1em;
+    background-color: #d2d2d2;
+
+	height: 0px;
+	overflow: hidden;
+	opacity: 0;
+	transition: 0.5s height, 0.5s opacity;
+}
+#head .inside #lang:hover ul {
+	opacity: 1;
+	height: 125px;
+}
+
+#head .inside #lang ul li {
+	display: block;
+	margin: 0px;
+}
+#head .inside #lang ul li a {
+	width: 100%;
+	padding: 0.3em 2em 0.3em 1em;
+	transition: 0.5s background-color;
+}
+#head .inside #lang ul li a:hover {
+	background-color: white; 
+}
+
+
+#head .content .hidden {
+	display: none;
+}
+/* ------------------------ */
+
+#ccontainer {
+	position: absolute;
+    top: 19em;
+    left: 0px;
+    right: 0px;
+    text-align: center;
+
+	min-width: 650px;
+}
+#ccontainer #carousel a {
+	color: white;
+	font-size: 6em;
+	font-style: italic;
+    font-family: Times New Roman;
+    white-space: nowrap;
+}
+#ccontainer #carousel a:hover {
+	text-decoration: none;
+}
+#ccontainer #carousel a strong {
+	font-size: inherit;
+	font-family: inherit;
+	font-style: inherit;
+	color: orange;
+	font-weight: normal;
+}
+
+/* ------------------------ */
+
+.col {
+	display: inline-block;
+	vertical-align: top;
+	width: 420px;
+	padding: 5px;
+	
+}
+.col ul li {
+	line-height: 1.5em
+}
+.col p {
+	word-spacing: 0.05em;
+}
+
+.full {
+	border: 2px solid #a7a7a7;
+	border-left: none;
+	border-right: none;
+}
+
+#intro .cols {
+	padding-bottom: 2em;
+}
+#nature .cols {
+	padding-bottom: 8em;
+}
+/* ------------------------ */
+
+#intro .full {
+	position: relative;
+}
+#intro .full p {
+	text-align: center;
+	width: 50%;
+    margin: 2em auto;
+}
+#intro .full .more {
+	position: absolute;
+    top: 3em;
+    right: 0px;
+}
+#intro .full .more a {
+	font-weight: bold;
+    padding-right: 20px;
+    background-image: url("images/plus.png");
+    background-position: right;
+}
+
+/* ------------------------ */
+
+#topgal a {
+	display: inline-block;
+    position: relative;
+    margin: 3px;
+    overflow: hidden;
+}
+#topgal a span {
+	position: absolute;
+    background: #cecece;
+    top: 250px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding-top: 25%;
+    box-sizing: border-box;
+    opacity: 0;
+
+    text-align: center;
+    transition: 0.75s top, 0.75s opacity;
+}
+#topgal a:hover span {
+	opacity: 1;
+	top: 0;
+}
+#topgal a span em {
+    display: block;
+}
+
+/* ------------------------ */
+
+.content {
+	overflow: hidden;
+}
+
+#contact {
+	background-color: #676767;
+	padding-bottom: 90px;
+}
+#contact .content {
+	position: relative;
+}
+#contact h2 {
+	color: white;
+	margin: 1.5em auto;
+}
+#contact .full {
+	padding-left: 31%;
+}
+
+#contact h3 {
+	color: white;
+	position: absolute;
+	left: 0px;
+	font-size: 1.25em;
+}
+#contact p {
+	color: white;
+	display: inline-block;
+	width: 46%;
+	margin: 1.75em auto;
+
+}
+#contact a {
+	color: white;
+}
+#contact .high {
+	color: orange;
+}
+
+/* ---------------- */
+
+#foot {
+	float: left;
+	width: 100%;
+}
+#foot .inside {
+	height: 7em;
+}
+#foot span {
+	line-height: 7em;
+	display: inline-block;
+}
+#foot span.contact {
+	float: right;
+}
+#foot span.contact a {
+	display: block;
+	height: 100%;
+}
+
+a.up {
+	background-image: url("images/up.png");
+    background-position: center;
+
+	position: relative;
+    display: block;
+    height: 7em;
+    margin: auto 77px;
+}
+a.up span {
+	position: absolute;
+    top: 0;
+    left: 0;
+    visibility: hidden;
+}
