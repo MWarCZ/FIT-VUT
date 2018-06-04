@@ -1,0 +1,235 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[table]{xcolor}% http://ctan.org/pkg/xcolor
+\usepackage{soul}
+%\usepackage{czech}
+
+\setlength{\hoffset}{-1.8cm} 
+\setlength{\voffset}{-2cm}
+\setlength{\textheight}{23.0cm} 
+\setlength{\textwidth}{17cm}
+
+\title{IMA - 1.samostatná práce - Zadání 2}
+\date{Letní semestr 2017}
+\author{}
+
+\usepackage{natbib}
+\usepackage{graphicx}
+
+\begin{document}
+
+\maketitle
+
+\section{Úkol č.1}
+ Rozložte na parciální zlomky racionální lomenou funkci 
+ $$ f(x)=\frac{-x^3-11x^2+8x+30}{x^5+7x^4+17x^3+23x^2+30x+18} $$
+ Rozklad jmenovatele v reálném oboru najděte pomocí Hornerova schématu. Řešení soustavy rovnic pro neurčité koeficienty můžete najít pomocí Maple (nebo jiného softwaru). \\
+  
+Napíšeme schéma rozkladu. Polynom v jmenovateli rozložíme. Pokud koeficienty jsou celočíselné, tak i kořen bude celočíselný a bude dělit poslední koeficient.
+\\
+Možné kořeny: 1, -1, 3, -3, 6, -6, 9, -9, 18, -18.
+\\ \\ 
+
+$ \quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad$
+\begin{tabular}{c | c c c c c c}
+ &\bfseries1 &\bfseries 7 &\bfseries 17 &\bfseries 23\bfseries &\bfseries 30 &\bfseries 18 \\ \hline
+ 
+\rowcolor{grey!10}\bfseries \st{1} & \st{1} & \st{8} & \st{25} & \st{48} & \st{78} & \st{96} \\
+
+\cellcolor{green!25}\bfseries -1 & 1 & 6 & 11 & 12 & 18 &\cellcolor{green!25} 0 \\
+
+\rowcolor{grey!10}\bfseries \st{-1} & \st{1} & \st{5} & \st{6} & \st{6} & \st{12} &  \\
+
+\bfseries \st{3} & \st{1} & \st{9} & \st{29} & \st{99} & \st{315} &  \\
+
+\cellcolor{green!25}\rowcolor{grey!10}\bfseries -3 & 1 & 3 & 2 & 6 &\cellcolor{green!25} 0 &  \\
+
+\cellcolor{green!25}\bfseries -3 & 1 & 0 & 2 &\cellcolor{green!25} 0 &  & \\
+
+\rowcolor{grey!10}\bfseries \st{-3} & \st{1} & \st{-3} & \st{11} &  &  &  \\
+\rowcolor{grey!10}\bfseries \st{-6} & \st{1} & \st{-6} & \st{-34} &  &  &  \\
+\rowcolor{grey!10}\bfseries \st{-3} & \st{1} & \st{-9} & \st{-79} &  &  &  \\
+\rowcolor{grey!10}\bfseries \st{-3} & \st{1} & \st{-18} & \st{-322} &  &  &  \\
+
+\end{tabular}
+
+\\
+$$f(x) = (x+1)(x^4+6x^3+11x^2+12x+18) $$
+$$f(x) = (x+1)(x+3)(x^3+3x^2+2x+5)$$
+$$f(x) = (x+1)(x+3)^2(x^2+2)$$
+\\
+$$f(x) = \frac{A}{x+1}+\frac{B_1}{x+3}+\frac{B_2}{(x+3)^2}+\frac{Cx+D}{x^2+2}$$
+$$f(x) = \frac{A(x+3)^2(x^2+2)+B_1(x+1)(x+3)(x^2+2)+B_2(x+1)(x^2+2)+(Cx+D)(x+1)(x+3)^2}{(x+1)(x+3)^2(x^2+2)}$$
+Z výše uvedeného zápisu vyplívá, že pokud dosadíme kořen -1 zůstane v rovnici koeficient $A$ (ostatní se vynulují) a pokud dosadíme kořen -3 zůstane koeficient $B_2$.
+\\\\
+Po vynásobení rovnice jmenovatelem: $(x+1)(x+3)^2(x^2+2)$. Dostaneme rovnici:
+$$A(x+3)^2(x^2+2)+B_1(x+1)(x+3)(x^2+2)+B_2(x+1)(x^2+2)+(Cx+D)(x+1)(x+3)^2 = -x^3-11x^2+8x+30$$
+Po dosazení $x=-1$:
+$$A(x+3)^2(x^2+2) = -x^3-11x^2+8x+30$$
+$$A(-1+3)^2(1+2)=1-11-8+30$$
+$$12A=12$$
+$$A=1$$
+Po dosazení $x=-3$:
+$$B_2(x+1(x^2+2)=-x^3-11x^2+8x+30$$
+$$B_2(-3+1)(9+2)=27-99-24+30$$
+$$-22B_2=-66$$
+$$B_2=3$$
+
+Ostatní koeficienty můžeme získat tak, že roznásobíme levou stranu a upravíme ji jako polynom. Obě strany porovnáme a získáme soustavu rovnic pro výpočet koeficientů.
+$$A(x+3)^2(x^2+2)+B_1(x+1)(x+3)(x^2+2)+B_2(x+1)(x^2+2)+(Cx+D)(x+1)(x+3)^2 = -x^3-11x^2+8x+30$$
+$$A(x^4+6x^3+11x^2+12x+18)+B_1(x^4+4x^3+5x^2+8x+6)+B_2(x^3+x^2+2x+2)+(Cx+D)(x^3+7x^2+15x+9) = $$
+$$= -x^3-11x^2+8x+30$$
+$$x^4+6x^3+11x^2+12x+18+B_1x^4+4B_1x^3+5B_1x^2+8B_1x+6B_1+3x^3+3x^2+6x+6+Cx^4+Dx^3+7Cx^3+7Dx^2+$$
+$$+15Cx^2+15Dx+9Cx+9D = -x^3-11x^2+8x+30$$
+\\
+$$x^4+B_1x^4+Cx^4=0$$
+$$6x^3+4B_1x^3+3x^3+Dx^3+7Cx^3=-x^3$$
+$$11x^2+5B_1x^2+3x^2+7Dx^2+15Cx^2 = -11x^2$$
+$$12x+8B_1x+6x+15Dx+9Cx = 8x$$
+$$18+6B_1+6+9D=30$$
+\\
+$$1+B_1+C=0$$
+$$6+4B_1+3+D+7C=-1$$
+$$11+5B_1+3+7D+15C=-11$$
+$$12+8B_1+6+15D+9C=8$$
+$$18+6B_1+6+9D=30$$
+\\
+Řešením této soustavy rovnic získáme koeficienty: $B_1=1$, $C=-2$, $D=0$ \\
+Výsledek:
+$$f(x)=\frac{1}{x+1}+\frac{1}{x+3}+\frac{3}{(x+3)^2}+\frac{-2x}{x^2+2}$$
+
+\newpage
+
+\section{Úkol č.2}
+Najděte asymptoty funkce $f(x)=\sqrt[3]{x^3-2x^2}$.
+\\
+Nejprve si určíme $ D_f: $
+$$D_f= R$$
+Definiční obor jsou všechna reálná čísla, což znamená, že funkce nemá žádné svislé asymptoty.
+\\
+Další na řadě jsou asymptoty se směrnicí:
+$$ y=kx+q $$
+$$ k_1: \lim_{x\rightarrow\infty} \frac{f(x)}{x} = \lim_{x\rightarrow\infty} \frac{\sqrt[3]{x^3-2x^2}}{x} = \lim_{x\rightarrow\infty} \sqrt[3]{\frac{x^3-2x^2}{x^3}} = \lim_{x\rightarrow\infty} \sqrt[3]{\frac{x^3(1-\frac{2}{x})}{x^3}}  = \lim_{x\rightarrow\infty} \sqrt[3]{(1-\frac{2}{x})} = \sqrt[3]{1-0} = 1$$
+$$ k_2: \lim_{x\rightarrow-\infty} \frac{f(x)}{x} = \lim_{x\rightarrow-\infty} \frac{\sqrt[3]{x^3-2x^2}}{x} = \lim_{x\rightarrow-\infty} \sqrt[3]{\frac{x^3-2x^2}{x^3}} = \lim_{x\rightarrow-\infty} \sqrt[3]{\frac{x^3(1-\frac{2}{x})}{x^3}}  = \lim_{x\rightarrow-\infty} \sqrt[3]{(1-\frac{2}{x})} = \sqrt[3]{1+0} = 1$$
+$$ k_1 = k_2 = 1 $$
+$$ q_1: \lim_{x\rightarrow\infty} f(x) - kx =
+\lim_{x\rightarrow\infty} \sqrt[3]{x^3-2x^2} - x =
+\lim_{x\rightarrow\infty} (x^3-2x^2)^{\frac{1}{3}} - x =
+\lim_{x\rightarrow\infty} (x^3(1-\frac{2}{x}))^{\frac{1}{3}}-x =
+\lim_{x\rightarrow\infty} x((1-\frac{2}{x}))^{\frac{1}{3}}-x = 
+$$
+$$ =
+\lim_{x\rightarrow\infty} x[((1-\frac{2}{x}))^{\frac{1}{3}}-1] =
+\lim_{x\rightarrow\infty} \frac{((1-\frac{2}{x}))^{\frac{1}{3}}-1}{x^{-1}} = L’Hospitalovo pravidlo = 
+\lim_{x\rightarrow\infty} \frac{\frac{1}{3}(1-\frac{2}{x})^{\frac{-2}{3}}*\frac{2}{x^2}}{-1x^{-2}} = 
+$$
+$$ =
+\lim_{x\rightarrow\infty} \frac{\frac{2}{3(1-\frac{2}{x})^{\frac{-2}{3}}x^2}}{-x^2}=
+\lim_{x\rightarrow\infty} \frac{-2}{3(1-\frac{2}{x})^{\frac{2}{3}}} =
+\frac{-2}{3(1-0)^{\frac{2}{3}}}=-\frac{2}{3}
+$$
+
+$$ q_2: \lim_{x\rightarrow-\infty} f(x) - kx =
+\lim_{x\rightarrow-\infty} \sqrt[3]{x^3-2x^2} - x =
+|... \;viz\; q_1 ...| =
+\lim_{x\rightarrow-\infty} \frac{-2}{3(1-\frac{2}{x})^{\frac{2}{3}}} =
+\frac{-2}{3(1+0)^{\frac{2}{3}}}=-\frac{2}{3}
+$$
+$$ q_1 = q_2 = -\frac{2}{3} $$
+Teď když máme k i q můžeme sestavit rovnici asymptoty:
+$$ y=kx+q $$
+$$ y=x-\frac{2}{3} $$
+
+\newpage
+\section{Úkol č.3}
+Daným bodem $A=[a, b]$ v prvním kvadrantu vedeme přímku $p$ tak, aby protla obě kladné poloosy; její průsečík s osou $x$ označme $X$, průsečík s osou $y$ ozna4me $Y$. Pro kterou přímku bude mít trojúhelník $OXY$, kde  $O$ je počátek souřadnic, nejmenší obsah?
+\\ \\
+Nakres:
+$\vspace{5cm}$
+\\
+Ze zadíní tedy vyplývá že:
+$$A=[a,b]; X=[m,0]; Y=[0,n]; a,b,m,n>0 $$
+Máme hledat nejmenší obsah, tudíž budeme potřebovat vzoreček pro výpočet obsahu. V našem případě pro výpočet obsahu pravoúhlého trojúhelníku.
+$$ S=\frac{m*n}{2} $$
+Dále víme, že přímka $p$ prochází bodem $A$. Proto dosadíme do rovnice obecné přímky bod $A$ a vyjádříme si neznámou $k$ nebo $q$.
+$$y=kx+q$$
+$$b=ka+q$$
+$$k=\frac{b-q}{a}$$
+Nyní provedeme to stejné pro body $X$ a $Y$. My ovšem máme již vyjádřené k, proto si vyjádříme $m$ a $n$ a následně dosadíme $k$.
+\\ X:
+$$y=kx+q$$
+$$0=km+q$$
+$$m=\frac{-q}{k}$$
+$$m=\frac{-q}{\frac{b-q}{a}}=\frac{-qa}{b-q}=\frac{aq}{q-b}$$
+\\ Y:
+$$y=kx+q$$
+$$n=k*0+q$$
+$$n=q$$
+Teď se vrátíme ke vzorečku s obsahem a dosadíme do něj.
+$$ S=\frac{m*n}{2}=\frac{1}{2}*m*n=\frac{1}{2}*\frac{aq}{q-b}*q=\frac{aq^2}{2(q-b)} $$
+Dále nalezneme takzvané body podezřelé z extrému. To znamená, že musíme vypočítat S' (Zderivovat náš vzoreček pro obsah).
+$$[\frac{aq^2}{2(q-b)}]'= \frac{(aq^2)'(2q-2b)-(aq^2)(2q-2b)'}{(2q-2b)^2} = \frac{2aq(2q-2b)-aq^2*2}{4(q-b)^2} = \frac{2(aq(2q-2b)-ag^2)}{4(q-b)^2} = $$
+$$= \frac{2aq^2-2abq-aq^2}{2(q-b)} = \frac{aq^2-2abq}{2(q-b)} =\frac{aq(q-2b)}{2(q-b)^2}$$
+$$\frac{aq(q-2b)}{2(q-b)^2}=0 / *2(q-b)^2 /aq$$
+$$q-2b=0$$
+$$q=2b$$
+Teď se vrátíme ke vzorečku s vyjádřeným $k$ ke je dosazen bod $A$ a dosadíme sem vypočtené $q$.
+$$k=\frac{b-q}{a}=\frac{b-2b}{a}=\frac{-b}{a}$$
+$$k=\frac{-b}{a}$$
+Na závěr dosadíme do obecné rovnice naše $k$ a $q$ a tím získáme přímku $p$.
+$$y=kx+q$$
+$$y=\frac{-b}{a}x+2b$$
+Hotovo máme přímku $p$, která protíná osu x i osu y a prochází bodem $A$.
+
+\newpage
+\section{Úkol č.4}
+ Načrtněte graf funkce f, pro kterou platí: $D_f=R-\{1\}$, pro $x=1$ má nespojitost 2.druhu,
+ $$
+ f(0)=f(-1)=0, \lim_{x\rightarrow1^+}f(x)=-2,
+ \lim_{x\rightarrow-\infty}f(x)=-2, f'(0)=2,
+ \lim_{x\rightarrow-1^-}f'(x)=\infty,
+ \lim_{x\rightarrow-1^+}f'(x)=-\infty, 
+ $$
+ $$
+ \lim_{x\rightarrow1^+}f'(x)=2,
+ f''(x)<0 \; pro \; x \in (0,1) \; a\;pro\; x \in (1,\infty),
+ f''(x)>0 \; pro \; x \in (-\infty,-1) \; a\;pro\; x \in (-1,0).
+ $$
+ Přímka $y=x-2$ je asymptota pro $x\rightarrow\infty$. \\
+ Do obrázku nakreslete i asymptoty a tečny resp. polotečny ke grafu funkce v bodech $x=0$, $x=1$ a $x=-1$.
+\newpage
+
+\section{Úkol č.5}
+Najděte nejvedší a nejmenší hodnotu funkce $f(x)=\sqrt[3]{(x+1)^2}-\sqrt[3]{(x-1)^2}$ na intervalu $<-2,2>$.
+\\
+Nejprve určíme $D_f$:
+$$D_f=R$$
+Dalším krokem bude zderivovoat $f(x)$. Pro zjednodušení rozdělíme funkci $f(x)$ na $g(x)$ a $h(x)$, neboť víme, že platí:
+$$f'(x) = ( g(x)- h(x))' = g'(x) - h'(x)$$
+Takže teď máme $g(x)=((x+1)^2)^{\frac{1}{3}}$ a $h(x)=((x-1)^2)^{\frac{1}{3}}$. Tyto funkce zderivujeme.
+\\
+$$g'(x)=[((x+1)^2)^{\frac{1}{3}}]'=\frac{1}{3}((x+1)^2)^{\frac{-2}{3}}*[(x+1)^2]'=\frac{1}{3((x+1)^2)^{\frac{2}{3}}}*(1(x+1)+(x+1)1)=$$
+$$=\frac{1}{3((x+1)^2)^{\frac{2}{3}}}*(x+1)(1+1)=\frac{2(x+1)}{3((x+1)^2)^{\frac{2}{3}}}$$
+
+$$h'(x)=[((x-1)^2)^{\frac{1}{3}}]'=\frac{1}{3}((x-1)^2)^{\frac{-2}{3}}*[(x-1)^2]'=\frac{1}{3((x-1)^2)^{\frac{2}{3}}}*(1(x-1)+(x-1)1)=$$
+$$=\frac{1}{3((x-1)^2)^{\frac{2}{3}}}*(x-1)(1+1)=\frac{2(x-1)}{3((x-1)^2)^{\frac{2}{3}}}$$
+
+Funkce máme zderivovány a můžeme je opět spojit.
+$$f'(x) = \frac{2(x+1)}{3((x+1)^2)^{\frac{2}{3}}} - \frac{2(x-1)}{3((x-1)^2)^{\frac{2}{3}}} $$
+Teď vidíme, že body podezřelé z extrému jsou na $x=-1$ a $x=1$.
+\\
+To nám rozděluje osu na tři intervaly pro které musíme určit zda funkce roste či klesá.
+$$ <-2,-1>: f(-2) = \frac{2(-2+1)}{3((-2+1)^2)^{\frac{2}{3}}} - \frac{2(-2-1)}{3((-2-1)^2)^{\frac{2}{3}}} \simeq -0.2044 $$
+$$ (-1,1>: f(0) = \frac{2(0+1)}{3((0+1)^2)^{\frac{2}{3}}} - \frac{2(0-1)}{3((0-1)^2)^{\frac{2}{3}}} = 0 $$
+$$ (1,2>: f(2) = \frac{2(2+1)}{3((2+1)^2)^{\frac{2}{3}}} - \frac{2(2-1)}{3((2-1)^2)^{\frac{2}{3}}} \simeq -0.2044 $$
+\\
+$.\quad -1 \quad\quad 1 $ \\
+$--|---|-- \quad\quad$ Tak teď vidíme, že minimum má funkce na $x=-1$ a maximum na $x=1$. \\
+$.\quad\backslash \quad\quad / \quad\quad \backslash $
+$\quad\quad\quad$ Teď již jen dopočítáme funkční hodnoty pro tato $x$.\\
+
+$$f(-1)=\sqrt[3]{(-1+1)^2}-\sqrt[3]{(-1-1)^2} = - \sqrt[2]{4}$$
+$$f(1)=\sqrt[3]{(1+1)^2}-\sqrt[3]{(1-1)^2} = \sqrt[2]{4}$$
+$$Min[-1,-\sqrt[2]{4}];\quad Max[1,\sqrt[2]{4}]$$
+
+\end{document}
