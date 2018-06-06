@@ -1,0 +1,57 @@
+# SMCLK je hlavni hodinovy vstup, zde pro nej specifikujeme kmitocet,
+# ktery na FITkitu ma hodnotu 7.3728 MHz...
+NET SMCLK TNM_NET = smclk_pin;
+TIMESPEC TS_smclk_pin = PERIOD smclk_pin 7.3728 MHz;
+# ...a samozrejme mu i priradime pin na FPGA podle schematu k FITkitu.
+NET SMCLK      LOC = P80;
+
+# doplnte mapovani pinu pro ostatni signaly entity
+NET RESET      LOC = P155;
+
+#--------------------
+# R0 19 X14 P204
+# R1 21 X16 P2
+# R2 23 X18 P7
+# R3 25 X20 P10
+# R4 27 X22 P12
+# R5 29 X24 P15
+# R6 31 X26 P18
+# R7 33 X28 P20
+#--------------------
+NET ROW<0>     LOC = P204;
+NET ROW<1>     LOC = P2;
+NET ROW<2>     LOC = P7;
+NET ROW<3>     LOC = P10;
+NET ROW<4>     LOC = P12;
+NET ROW<5>     LOC = P15;
+NET ROW<6>     LOC = P18;
+NET ROW<7>     LOC = P20;
+
+#--------------------
+# C0 35 X30 P26
+# C1 34 X32 P28
+# C2 39 X34 P34
+# C3 41 X36 P36
+# C4 43 X38 P39
+# C5 45 X40 P42
+# C6 47 X42 P44
+# C7 49 X44 P46
+#-------------------
+#NET COL<0>     LOC = P26;
+#NET COL<1>     LOC = P28;
+#NET COL<2>     LOC = P34;
+#NET COL<3>     LOC = P36;
+#NET COL<4>     LOC = P39;
+#NET COL<5>     LOC = P42;
+#NET COL<6>     LOC = P44;
+#NET COL<7>     LOC = P46;
+#-------------------
+NET LED<0>     LOC = P26;
+NET LED<1>     LOC = P28;
+NET LED<2>     LOC = P34;
+NET LED<3>     LOC = P36;
+NET LED<4>     LOC = P39;
+NET LED<5>     LOC = P42;
+NET LED<6>     LOC = P44;
+NET LED<7>     LOC = P46;
+
