@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SVG.js</title>
+
+  <!-- svg -->
+  <link rel="stylesheet" type="text/css" media="screen" href="http://lib.mwarcz.cz/svg.select.js/3.0.1/svg.select.css">
+
+  <script src="http://lib.mwarcz.cz/svg.js/2.6.6/svg.min.js"></script>
+  <script src="http://lib.mwarcz.cz/svg.select.js/3.0.1/svg.select.js"></script>
+  <script src="http://lib.mwarcz.cz/svg.resize.js/1.4.2/svg.resize.js"></script>
+  <!-- <script src="http://lib.mwarcz.cz/svg.draggable.js/2.2.1/svg.draggable.js"></script>-->
+  <script src="http://lib.mwarcz.cz/svg.draggy.js/1.1.1/svg.draggy.min.js"></script>
+  <script src="http://lib.mwarcz.cz/svg.connectable.js/1.0.2/svg.connectable.min.js"></script>
+
+  <!-- -->
+  <link rel="stylesheet" type="text/css" media="screen" href="style.css">
+
+</head>
+<!-- -->
+<body>
+  <div id="wrapper">
+    <div id="center">
+      <div id="panel1">
+        <!-- Panel nastroju -->
+
+        <!-- Vyber Nastroje ... Tools -->
+
+        <!-- Nastroj: 0 -->
+        <input id="tool0_btn" class="tool_btn" type="radio" name="tool" value="" checked="true" />
+        <label id="tool0" class="tool_btn" for="tool0_btn">a</label>
+
+        <!-- Nastroj: 1 -->
+        <input id="tool1_btn" class="tool_btn" type="radio" name="tool" value="" />
+        <label id="tool1" class="tool_btn" for="tool1_btn">a</label>
+
+        <!-- Nastroj: 2 -->
+        <input id="tool2_btn" class="tool_btn" type="radio" name="tool" value="" />
+        <label id="tool2" class="tool_btn" for="tool2_btn">a</label>
+
+        <!-- Nastroj: 3 -->
+        <input id="tool3_btn" class="tool_btn" type="radio" name="tool" value="" />
+        <label id="tool3" class="tool_btn" for="tool3_btn">a</label>
+
+        <!-- Panely pro Nastroje ... Toolboxs -->
+
+        <!-- Panel pro nastroj: 0 -->
+        <div id="tool0_box" class="tool_box">
+          <!-- Group 0 -->
+          <input  id="elementgroup0_btn" class="elementgroup_btn" type="radio" name="elementgroup" value="" checked="true" />
+          <label class="elementgroup_btn" for="elementgroup0_btn">Group 0</label>
+          <div id="elementgroup0_box" class="elementgroup_box">
+
+          </div>
+          <!-- Group 1 -->
+          <input  id="elementgroup1_btn" class="elementgroup_btn" type="radio" name="elementgroup" value="" />
+          <label class="elementgroup_btn" for="elementgroup1_btn">Group 1</label>
+          <div id="elementgroup1_box" class="elementgroup_box">
+
+          </div>
+          <!-- Group 2 -->
+          <input  id="elementgroup2_btn" class="elementgroup_btn" type="radio" name="elementgroup" value="" />
+          <label class="elementgroup_btn" for="elementgroup2_btn">Group 2</label>
+          <div id="elementgroup2_box" class="elementgroup_box">
+
+          </div>
+        </div>
+
+        <!-- Panel pro nastroj: 1 -->
+        <div id="tool1_box" class="tool_box">
+        </div>
+
+        <!-- Panel pro nastroj: 2 -->
+        <div id="tool2_box" class="tool_box">
+        </div>
+
+        <!-- Panel pro nastroj: 3 -->
+        <div id="tool3_box" class="tool_box">
+        </div>
+
+
+
+      </div>
+
+      <div id="draw">
+      </div>
+
+    </div>
+
+    <div id="bottom">
+    </div>
+  </div>
+
+  <div id="drawing"></div>
+  <script>
+
+// Globalni
+var MODE = {
+  SELECT: 'select',
+  ADD: 'add',
+  REMOVE: 'remove',
+  ARROW: 'arrow',
+  TEXT: 'text',
+}
+var nowMode = MODE.SELECT;
+var oldMode = MODE.SELECT;
+const changeMode = function (newMode) {
+  oldMode = nowMode;
+  nowMode = newMode;
+  console.log('MODE:', nowMode);
+};
+
+var selectElement = undefined;
+const changeSelectElement = function (element) {
+  // Pred zmenou elementu
+  if(!!selectElement) {
+    selectElement.actions.select(false)
+    selectElement.use.draggy(true)
+  }
+  // Zmena elementu
+  selectElement = element;
+  // Po zmene elementu
+  if(!!selectElement) {
+    selectElement.actions.select(true)
+    selectElement.use.draggy()
+  }
+
+  //console.log('Change selected element:', selectElement);
+  console.log('Change selected element:');
+};
+
+var newElement = undefined;
+const changeNewElement = function (element) {
+  newElement = element;
+  console.log('Change new element:', newElement);
+};
+
+// Hlavni kreslici plocha
+var draw = SVG('draw').size(1000, 1000).attr({style:'background:#fff'});
+var drawContainer = draw.group();
+var drawMarkers  = draw.group();
+var listOfConns = { conns: []}
+
+var rect = draw.rect(100, 100).attr({ fill: '#f0f' });
+var rect2 = draw.rect(100, 100).x(300).attr({ fill: '#0ff' });
+//rect.selectize()
+
+
+// Ovladaci prvky:
+var tools = [
+  document.getElementById('tool0_btn'),
+  document.getElementById('tool1_btn'),
+  document.getElementById('tool2_btn'),
+  document.getElementById('tool3_btn'),
+]
+tools[0].onchange = () => {changeMode(MODE.SELECT);}
+tools[1].onchange = () => {
+  changeMode(MODE.ARROW);
+  changeSelectElement(undefined)
+}
+tools[2].onchange = () => {changeMode(MODE.REMOVE);}
+tools[3].onchange = () => {changeMode(MODE.TEXT);}
+
+/*
+var items = [];
+for(let i = 0; i<10; i++) {
+  let itemsvg = SVG('elementgroup0_box').size(50, 50).attr({style:'background:#fff'});
+  let item = itemsvg.group();
+  let rec = item.rect(100, 100).attr({ fill: '#ff0' });
+  itemsvg.on('click', (e)=> {
+    let cloneItem = item.clone()
+    cloneItem.off();
+    cloneItem.on('click', e=>console.log('aaa'))
+    let newItem = draw.use(cloneItem).move(200, 200).draggy();
+    console.log('xxx');
+    newItem.on('click', (e)=>{
+      newItem.selectize().resize();
+      //newItem.draggy();
+    })
+    draw.use(item).move(300, 100);
+  })
+  items.push(item)
+}
+*/
+//
+
+// Tato trida => Zatim nepouzito
+class MyElement {
+  constructor(actions, group, items) {
+    this.group = group;
+    this.items = items;
+    this.actions = actions;
+  }
+}
+
+
+const ElementFactory = {
+  svg: new SVG('elementgroup0_box').size(1, 1),
+
+  Rect (svg = this.svg) {
+    let actions = {}
+    let size = [150, 100];
+    let group = svg.group();
+
+    let outline = group.rect(size[0], size[1]).attr({
+      fill: 'transparent',
+      stroke: '#00f',
+      'stroke-width': 0,
+      'stroke-dasharray': "20,0"
+    });
+
+    let rec = group.rect(size[0], size[1]).attr({
+      fill: '#ffff00',
+    });
+
+    let txt = group.text("Nějaký\ntext.").move(10,10);
+
+    let resize = group.polygon('20,0 0,20 20,20').attr({
+      fill: '#00f',
+      opacity: 0,
+    });
+    resize.addClass('resize-nw')
+    resize.x( size[0]-resize.width() );
+    resize.y( size[1]-resize.height() );
+
+    /**
+     * Funkce elementu pro zmenu velikosti.
+     */
+    actions.resize = function (w, h) {
+      rec.size(w,h);
+      outline.size(w,h);
+      resize.x( w-resize.width() );
+      resize.y( h-resize.height() );
+    }
+    /**
+     * Funkce elementu pro zmenu velikosti.
+     */
+    actions.remove = function () {
+      group.remove()
+    }
+    /**
+     * Funkce elementu pro vizualni znazorneni vyberu elementu.
+     */
+    actions.select = function (selectOrUnselect = true) {
+      if(selectOrUnselect) {
+        outline.attr({
+          'stroke-width': 5,
+        });
+        resize.attr({
+          opacity: 1,
+        });
+      } else {
+        outline.attr({
+          'stroke-width': 0,
+        });
+        resize.attr({
+          opacity: 0,
+        });
+      }
+    }
+
+    // Vracena struktura elementu
+    return {
+      actions,
+      group,
+      items: {
+        main: rec,
+        outline,
+        text: txt,
+        resize: resize,
+        use: undefined,
+      }
+    };
+  },
+}
+
+// Výber elementu pro vlozeni
+for(let i = 0; i<1; i++) {
+  let itemsvg = SVG('elementgroup0_box')
+  let {group, items} = ElementFactory.Rect()
+  let elementType = itemsvg.use(group).move(0,0)
+  elementType.on('click', (e)=>{
+    if(nowMode === MODE.ADD){
+      changeMode(oldMode);
+    } else {
+      changeMode(MODE.ADD);
+    }
+  })
+
+}
+
+//
+const ElementManager = {
+
+  create(e, factoryFunction = ElementFactory.Rect) {
+    console.log('pos', e)
+    let element = factoryFunction(draw)
+    let {group, items} = element
+    //let use = draw.use(group).move(e.offsetX, e.offsetY)
+    let use = group.move(e.offsetX, e.offsetY)
+    element.use = use;
+
+    use.on('click', (e)=>{
+      switch(nowMode) {
+        case MODE.SELECT:
+          changeSelectElement(element)
+          break;
+
+        case MODE.REMOVE:
+          changeSelectElement(undefined)
+          // Smazani sipek mezi elementy
+          listOfConns.conns = listOfConns.conns.filter(conn => {
+            if( conn.source === element.group || conn.target === element.group) {
+
+              Connection.RemoveConnection(conn);
+              return false;
+            } else {
+              return true;
+            }
+          })
+          // smazani elementu z obrazku
+          element.actions.remove()
+          // uvolneni elementu
+          delete element
+          break;
+
+        case MODE.ARROW:
+          if(!!selectElement) {
+            // Vytvoreni propoje/sipky
+            let conn = Connection.CreateConnection(selectElement.group, element.group, (e)=>{
+              if(nowMode === MODE.REMOVE) {
+                Connection.RemoveConnection(conn);
+              }
+            })
+            listOfConns.conns.push(conn)
+
+            // Uz je spojeni => odebere se vyber
+            changeSelectElement(undefined)
+          } else {
+            // Vybere se prvni element se kterim se spojuje
+            changeSelectElement(element)
+          }
+          break;
+      }
+
+    }) // click
+    use.on('mousedown', (e)=>{
+      switch(nowMode) {
+        case MODE.SELECT:
+          //changeMode(MODE.MOVE);
+          break;
+      }
+    }) // mousedown
+    use.on('mouseup', (e)=>{
+      switch(nowMode) {
+        case MODE.MOVE:
+          //changeMode(MODE.SELECT);
+          break;
+      }
+    }) // mouseup
+
+
+    // Resize element
+    let isMoved = false;
+    items.resize.on('mouseenter', (e)=>{
+        if(!!selectElement) {
+          selectElement.use.draggy(true)
+        }
+    });
+    items.resize.on('mouseleave', (e)=>{
+        if(!!selectElement) {
+          selectElement.use.draggy()
+        }
+    });
+    items.resize.on('mousedown', (e)=>{
+      isMoved = true;
+    });
+    items.resize.on('mouseup', (e)=>{
+      isMoved = false;
+    });
+    draw.on('mousemove', (e)=>{
+      if(isMoved && !!selectElement) {
+        let x = e.offsetX - selectElement.use.x()+5
+        let y = e.offsetY - selectElement.use.y()+5
+        selectElement.actions.resize(x, y);
+      }
+    });
+
+  } // create
+}
+
+
+
+draw.on('click', e=>{
+  switch(nowMode) {
+    case MODE.ADD:
+      ElementManager.create(e);
+      changeMode(oldMode)
+      break;
+  }
+})
+draw.on('mouseup', e=>{
+  switch(nowMode) {
+    case MODE.SELECT:
+      if(!!selectElement) {
+        changeSelectElement(undefined)
+      }
+      break;
+  }
+})
+
+/*
+console.log('A',ElementFactory)
+let tmp = ElementFactory.Rect()
+console.log('B',tmp)
+var x = draw.use(tmp.group).move(200, 200)
+x.on('click', e=>{
+      console.log('xxx',x)
+      // x.selectize().resize();
+      x.draggy();
+    })
+x.style="outline"
+var y = draw.use(ElementFactory.Rect().group).move(80, 200)
+y.on('click', e=>{
+    console.log('yyy',y)
+    // x.selectize().resize();
+    y.draggy();
+  })
+*/
+
+// Struktura pro vytvareni a odstranovani Propoju/sipek
+// TODO Zatim neni pouzita
+const Connection = {
+  CreateConnection: function(element1, element2, click_callback) {
+    let conn1 = element1.connectable({
+      container: drawContainer,
+      markers: drawMarkers,
+      marker: 'default',
+      targetAttach: 'perifery',
+      sourceAttach: 'perifery',
+      color: '#000',
+    }, element2);
+
+    // Vizualni uprava sipky
+    conn1.marker.attr({
+      markerWidth: '5',
+      markerHeight: '5',
+      refX: '28',
+    })
+    conn1.connector.attr({'stroke-width':5})
+
+    // Nastaveni callbacku pro kliknuti
+    if(!!click_callback) {
+      conn1.connector.on('click', click_callback);
+    }
+
+    //listOfConns.conns.push(conn1)
+    return conn1;
+  }, // CreateConnection
+
+  RemoveConnection: function(conn) {
+    conn.marker.remove()
+    conn.connector.remove()
+  }, // RemoveConnection
+}
+
+
+  </script>
+</body>
+</html>

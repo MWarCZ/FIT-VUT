@@ -1,0 +1,217 @@
+
+/* body, div, input {
+  margin: 0;
+  padding: 0;
+} */
+
+#wrapper {
+  background: darkgray;
+
+  /* size + position*/
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  /* flex root */
+  display: flex;
+  flex-direction: column;
+}
+
+/**
+ * Spodni cast
+ */
+#bottom {
+  background: red;
+
+  /* size */
+  height: 50px;
+  width: 100%;
+
+  /* flex */
+  order: 2;
+}
+
+#center {
+  background: green;
+
+  /* flex item */
+  order: 1;
+  flex-grow: 1; /* size */
+
+  /* flex root */
+  display: flex;
+}
+
+/**
+ * Cast s kreslící plochou
+ */
+#draw {
+  background: yellow;
+
+  overflow: scroll;
+
+  /* flex item */
+  order: 1;
+  flex-grow: 1;
+}
+
+/**
+ * Bocni panel s nastroji
+ */
+#panel1 {
+  background: yellowgreen;
+
+  /* size */
+  width: 190px;
+  min-width: 190px;
+
+  /* flex item */
+  order: 0;
+
+  /* grid root */
+  display: grid;
+  grid-template-rows: 80px 80px auto;
+
+  border: black 1px solid;
+
+}
+
+
+/**
+ * Nastroje
+ */
+input.tool_btn {
+  display: none;
+}
+label.tool_btn {
+  background: lightskyblue;
+
+  display: inline-block;
+}
+
+input:checked + label.tool_btn {
+  background: deepskyblue;
+}
+
+#tool0 {
+  /* grid item */
+  grid-row: 1;
+}
+#tool1 {
+  /* grid item */
+  grid-row: 1;
+}
+#tool2 {
+  /* grid item */
+  grid-row: 2;
+}
+#tool3 {
+  /* grid item */
+  grid-row: 2;
+}
+
+/**
+ * Toolboxs
+ */
+.tool_box{
+  background: pink;
+
+  display: none;
+
+  /* grid item */
+  grid-row: 3;
+  grid-column: 1 / span 2;
+}
+
+#tool0_btn:checked ~ #tool0_box {
+  /* flex root */
+  display: flex;
+  flex-flow: column;
+}
+#tool1_btn:checked ~ #tool1_box {
+  /* flex root */
+  display: flex;
+  flex-flow: column;
+}
+#tool2_btn:checked ~ #tool2_box {
+  /* flex root */
+  display: flex;
+  flex-flow: column;
+}
+#tool3_btn:checked ~ #tool3_box {
+  /* flex root */
+  display: flex;
+  flex-flow: column;
+}
+
+
+/**
+ * Tool0 - vyber skupin elementu
+ */
+input.elementgroup_btn {
+  display: none;
+}
+label.elementgroup_btn {
+  background: blue;
+
+  display: inline-block;
+}
+
+input:checked + label.elementgroup_btn {
+  background: green;
+}
+
+
+/**
+ * Tool0 - boxy s elementy
+ */
+.elementgroup_box{
+  background: #37ffb0;
+
+  display: none;
+
+  flex-grow: 1;
+}
+
+#elementgroup0_btn:checked ~ #elementgroup0_box {
+  display: flex;
+  flex-direction: column;
+  flex-flow: wrap;
+}
+#elementgroup1_btn:checked ~ #elementgroup1_box {
+  display: flex;
+  flex-direction: column;
+  flex-flow: wrap;
+}
+#elementgroup2_btn:checked ~ #elementgroup2_box {
+  display: flex;
+  flex-direction: column;
+  flex-flow: wrap;
+}
+
+
+svg {
+  display: block;
+  margin: 0px;
+  outline: black 3px solid;
+  background: white;
+}
+.tool_box {
+  overflow: auto;
+}
+.elementgroup_box {
+  overflow: auto;
+}
+.elementgroup_btn {
+  line-height: 40px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* */
+.resize-nw{
+  cursor: nw-resize;
+}
+
