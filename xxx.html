@@ -30,19 +30,19 @@
 
         <!-- Nastroj: 0 -->
         <input id="tool0_btn" class="tool_btn" type="radio" name="tool" value="" checked="true" />
-        <label id="tool0" class="tool_btn" for="tool0_btn">a</label>
+        <label id="tool0" class="tool_btn" for="tool0_btn"></label>
 
         <!-- Nastroj: 1 -->
         <input id="tool1_btn" class="tool_btn" type="radio" name="tool" value="" />
-        <label id="tool1" class="tool_btn" for="tool1_btn">a</label>
+        <label id="tool1" class="tool_btn" for="tool1_btn"></label>
 
         <!-- Nastroj: 2 -->
         <input id="tool2_btn" class="tool_btn" type="radio" name="tool" value="" />
-        <label id="tool2" class="tool_btn" for="tool2_btn">a</label>
+        <label id="tool2" class="tool_btn" for="tool2_btn"></label>
 
         <!-- Nastroj: 3 -->
         <input id="tool3_btn" class="tool_btn" type="radio" name="tool" value="" />
-        <label id="tool3" class="tool_btn" for="tool3_btn">a</label>
+        <label id="tool3" class="tool_btn" for="tool3_btn"></label>
 
         <!-- Panely pro Nastroje ... Toolboxs -->
 
@@ -119,22 +119,26 @@ tools[2].onchange = () => {app.changeMode(MODE.REMOVE);}
 tools[3].onchange = () => {app.changeMode(MODE.TEXT);}
 
 
-// Výber elementu pro vlozeni
-for(let i = 0; i<1; i++) {
+// Generovani výberu elementu pro vlozeni
+var arrDElementsFactory = [
+  DElementFactory.Rect,
+  DElementFactory.Ellipse
+]
+arrDElementsFactory.forEach(factory => {
   let itemsvg = SVG('elementgroup0_box')
-  let dElement = DElementFactory.Rect(itemsvg)
-
-  //let {group, items} = ElementFactory.Rect()
+  let dElement = factory(itemsvg)
   let elementType = itemsvg.use(dElement.group).move(0,0)
+
   elementType.on('click', (e)=>{
-    if(app.nowMode === MODE.ADD){
-      app.changeMode(app.oldMode);
+    if (app.nowMode === MODE.ADD) {
+      app.changeMode(app.oldMode)
     } else {
-      app.changeMode(MODE.ADD);
+      app.changeNewElementFactory(factory)
+      app.changeMode(MODE.ADD)
     }
   })
+})
 
-}
 
 
   </script>

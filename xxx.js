@@ -5,6 +5,7 @@ const MODE = {
   ARROW: 'arrow',
   TEXT: 'text',
   MOVE: 'move',
+  RESIZE: 'resize',
 }
 
 const App = function (idOfDrawingDiv, width=1000, height=1000 ) {
@@ -31,14 +32,14 @@ const App = function (idOfDrawingDiv, width=1000, height=1000 ) {
   this.selectedElement = undefined
 
   // Novy element pro pridani do diagramu
-  this.newElement = undefined
+  this.newElementFactory = DElementFactory.Rect
 
   // Kreslici plocha => Akce
   this.draw.on('click', e=>{
     console.log('draw click')
     switch(this.nowMode) {
       case MODE.ADD:
-        this.createNewDElement(e, this.draw, DElementFactory.Rect);
+        this.createNewDElement(e, this.draw, this.newElementFactory);
         this.changeMode(this.oldMode)
         break;
     }
@@ -84,10 +85,10 @@ App.prototype = {
     console.log('Change selectedElement.')
   }, // selectElement
 
-  changeNewElement: function (dElement) {
-    this.newElement = dElement
-    console.log('Change newElement.')
-  }, // changeNewElement
+  changeNewElementFactory: function (dElementFactory) {
+    this.newElementFactory = dElementFactory
+    console.log('Change newElementFactory.')
+  }, // changeNewElementFactory
 
   createConnection: function(dElement1, dElement2, click_callback) {
     // Vytvoreni propoje mezi elementy 1 a 2
@@ -221,7 +222,11 @@ App.prototype = {
     }) // mouseenter
     dElement.group.on('mouseleave', e => {
       console.log('dElement mouseleave')
-      dElement.group.draggy(true)
+      switch(this.nowMode) {
+        case MODE.SELECT:
+          dElement.group.draggy(true)
+          break;
+      }
       dElement.focus(false)
     }) // mouseleave
 
@@ -309,7 +314,7 @@ const DElementFactory = {
       fill: '#ffff00',
     });
 
-    let txt = group.text("Nějaký\ntext.").move(10,10);
+    let txt = group.text("Nejaky\ntext.").move(10,10);
 
     let resize = group.polygon('20,0 0,20 20,20').attr({
       fill: '#00f',
@@ -378,6 +383,95 @@ const DElementFactory = {
 
     return dElement
   }, // Rect
+
+  Ellipse (draw) {
+    let size = [150, 100];
+    let group = draw.group();
+    // Vysledny DElement
+    let dElement = new DElement(group)
+
+    let outline = group.rect(size[0], size[1]).attr({
+      fill: 'transparent',
+      stroke: '#00f',
+      'stroke-width': 0,
+      'stroke-dasharray': "20,0"
+    });
+
+    let rec = group.ellipse(size[0], size[1]).attr({
+      fill: '#ffff00',
+    });
+
+    let resize = group.polygon('20,0 0,20 20,20').attr({
+      fill: '#00f',
+      opacity: 0,
+    });
+    resize.addClass('resize-nw')
+    resize.x( size[0]-resize.width() );
+    resize.y( size[1]-resize.height() );
+
+    // Vracena struktura elementu
+    dElement.items = [ rec, outline, resize ]
+    dElement.resizer = resize
+
+    /**
+     * Funkce elementu pro zmenu velikosti.
+     */
+    dElement.resize = function (w, h) {
+      if (w<0 || h<0)
+        return
+      let x = rec.x()
+      let y = rec.y()
+      rec.size(w,h);
+      rec.move( x, y )
+      //rec.move( rec.x(), rec.y())
+      outline.size(w,h);
+      resize.x( w-resize.width() );
+      resize.y( h-resize.height() );
+    }
+    /**
+     * Funkce elementu pro zmenu velikosti.
+     */
+    dElement.remove = function () {
+      group.remove()
+    }
+    /**
+     * Funkce elementu pro vizualni znazorneni vyberu elementu.
+     */
+    let refreshOutline = function () {
+      if(dElement.selected) {
+        outline.attr({
+          'stroke-width': 3,
+          stroke: '#00f',
+        });
+        resize.attr({
+          opacity: 1,
+        });
+      } else if(dElement.focused) {
+        outline.attr({
+          'stroke-width': 3,
+          stroke: '#f00',
+        });
+      } else {
+        outline.attr({
+          'stroke-width': 0,
+          stroke: '#000',
+        });
+        resize.attr({
+          opacity: 0,
+        });
+      }
+    }
+    dElement.select = function (selectOrUnselect = true) {
+      dElement.selected = selectOrUnselect
+      refreshOutline()
+    }
+    dElement.focus = function (focusOrUnfocus = true) {
+      dElement.focused = focusOrUnfocus
+      refreshOutline()
+    }
+
+    return dElement
+  }, // Ellipse
 
 } // const DElementFactory
 
