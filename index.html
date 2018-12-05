@@ -104,6 +104,7 @@ var MODE = {
 }
 var nowMode = MODE.SELECT;
 var oldMode = MODE.SELECT;
+
 const changeMode = function (newMode) {
   oldMode = nowMode;
   nowMode = newMode;
@@ -111,6 +112,8 @@ const changeMode = function (newMode) {
 };
 
 var selectElement = undefined;
+var listElements = []; // nepouzito
+
 const changeSelectElement = function (element) {
   // Pred zmenou elementu
   if(!!selectElement) {

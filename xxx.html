@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WFDMW</title>
+
+  <!-- svg -->
+  <link rel="stylesheet" type="text/css" media="screen" href="http://lib.mwarcz.cz/svg.select.js/3.0.1/svg.select.css">
+
+  <script src="http://lib.mwarcz.cz/svg.js/2.6.6/svg.min.js"></script>
+  <script src="http://lib.mwarcz.cz/svg.select.js/3.0.1/svg.select.js"></script>
+  <script src="http://lib.mwarcz.cz/svg.resize.js/1.4.2/svg.resize.js"></script>
+  <!-- <script src="http://lib.mwarcz.cz/svg.draggable.js/2.2.1/svg.draggable.js"></script>-->
+  <script src="http://lib.mwarcz.cz/svg.draggy.js/1.1.1/svg.draggy.min.js"></script>
+  <script src="http://lib.mwarcz.cz/svg.connectable.js/1.0.2/svg.connectable.min.js"></script>
+
+  <script src="xxx.js"></script>
+
+  <!-- -->
+  <link rel="stylesheet" type="text/css" media="screen" href="style.css">
+
+</head>
+<!-- -->
+<body>
+  <div id="wrapper" class="noselect">
+    <div id="center">
+      <div id="panel1">
+        <!-- Panel nastroju -->
+
+        <!-- Vyber Nastroje ... Tools -->
+
+        <!-- Nastroj: 0 -->
+        <input id="tool0_btn" class="tool_btn" type="radio" name="tool" value="" checked="true" />
+        <label id="tool0" class="tool_btn" for="tool0_btn">a</label>
+
+        <!-- Nastroj: 1 -->
+        <input id="tool1_btn" class="tool_btn" type="radio" name="tool" value="" />
+        <label id="tool1" class="tool_btn" for="tool1_btn">a</label>
+
+        <!-- Nastroj: 2 -->
+        <input id="tool2_btn" class="tool_btn" type="radio" name="tool" value="" />
+        <label id="tool2" class="tool_btn" for="tool2_btn">a</label>
+
+        <!-- Nastroj: 3 -->
+        <input id="tool3_btn" class="tool_btn" type="radio" name="tool" value="" />
+        <label id="tool3" class="tool_btn" for="tool3_btn">a</label>
+
+        <!-- Panely pro Nastroje ... Toolboxs -->
+
+        <!-- Panel pro nastroj: 0 -->
+        <div id="tool0_box" class="tool_box">
+          <!-- Group 0 -->
+          <input  id="elementgroup0_btn" class="elementgroup_btn" type="radio" name="elementgroup" value="" checked="true" />
+          <label class="elementgroup_btn" for="elementgroup0_btn">Group 0</label>
+          <div id="elementgroup0_box" class="elementgroup_box">
+
+          </div>
+          <!-- Group 1 -->
+          <input  id="elementgroup1_btn" class="elementgroup_btn" type="radio" name="elementgroup" value="" />
+          <label class="elementgroup_btn" for="elementgroup1_btn">Group 1</label>
+          <div id="elementgroup1_box" class="elementgroup_box">
+
+          </div>
+          <!-- Group 2 -->
+          <input  id="elementgroup2_btn" class="elementgroup_btn" type="radio" name="elementgroup" value="" />
+          <label class="elementgroup_btn" for="elementgroup2_btn">Group 2</label>
+          <div id="elementgroup2_box" class="elementgroup_box">
+
+          </div>
+        </div>
+
+        <!-- Panel pro nastroj: 1 -->
+        <div id="tool1_box" class="tool_box">
+        </div>
+
+        <!-- Panel pro nastroj: 2 -->
+        <div id="tool2_box" class="tool_box">
+        </div>
+
+        <!-- Panel pro nastroj: 3 -->
+        <div id="tool3_box" class="tool_box">
+        </div>
+
+
+
+      </div>
+
+      <div id="draw">
+      </div>
+
+    </div>
+
+    <div id="bottom">
+    </div>
+  </div>
+
+  <div id="drawing"></div>
+  <script>
+
+  var app = new App('draw')
+
+var rect = app.draw.rect(100, 100).attr({ fill: '#f0f' });
+var rect2 = app.draw.rect(100, 100).x(300).attr({ fill: '#0ff' });
+//rect.selectize()
+
+
+// Ovladaci prvky:
+var tools = [
+  document.getElementById('tool0_btn'),
+  document.getElementById('tool1_btn'),
+  document.getElementById('tool2_btn'),
+  document.getElementById('tool3_btn'),
+]
+tools[0].onchange = () => {app.changeMode(MODE.SELECT);}
+tools[1].onchange = () => {
+  app.changeMode(MODE.ARROW);
+  app.selectElement(undefined)
+}
+tools[2].onchange = () => {app.changeMode(MODE.REMOVE);}
+tools[3].onchange = () => {app.changeMode(MODE.TEXT);}
+
+
+// Výber elementu pro vlozeni
+for(let i = 0; i<1; i++) {
+  let itemsvg = SVG('elementgroup0_box')
+  let dElement = DElementFactory.Rect(itemsvg)
+
+  //let {group, items} = ElementFactory.Rect()
+  let elementType = itemsvg.use(dElement.group).move(0,0)
+  elementType.on('click', (e)=>{
+    if(app.nowMode === MODE.ADD){
+      app.changeMode(app.oldMode);
+    } else {
+      app.changeMode(MODE.ADD);
+    }
+  })
+
+}
+
+
+  </script>
+</body>
+</html>
