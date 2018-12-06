@@ -10,11 +10,12 @@ const MODE = {
 
 const App = function (idOfDrawingDiv, width=1000, height=1000 ) {
   // Hlavni kreslici plocha
-  this.draw = SVG(idOfDrawingDiv).size(width, height).attr({style:'background:#fff'})
+  this.draw = new SVG(idOfDrawingDiv).size(width, height).attr({style:'background:#fff'})
+  this.drawGroup = this.draw.group()
 
   // TODO
-  this.drawContainer = this.draw.group()
-  this.drawMarkers  = this.draw.group()
+  this.drawContainer = this.drawGroup.group()
+  this.drawMarkers  = this.drawGroup.group()
   // Obekt s poli
   this.listOf = {
     // List vsech propoju mezi elementy diagramu
@@ -39,7 +40,7 @@ const App = function (idOfDrawingDiv, width=1000, height=1000 ) {
     console.log('draw click')
     switch(this.nowMode) {
       case MODE.ADD:
-        this.createNewDElement(e, this.draw, this.newElementFactory);
+        this.createNewDElement(e, this.drawGroup, this.newElementFactory);
         this.changeMode(this.oldMode)
         break;
     }
@@ -144,6 +145,7 @@ App.prototype = {
     console.log('DElementManager create: ', e)
     let dElement = factoryFunction(draw)
     dElement.group.move(e.offsetX, e.offsetY)
+    this.listOf.dElements.push(dElement)
 
     // Akce pro element na plose
     dElement.group.on('click', e => {
@@ -158,6 +160,7 @@ App.prototype = {
           // Smazani sipek mezi elementy
           this.removeConnectionsByDElement(dElement)
           // smazani elementu z obrazku
+          this.listOf.dElements = this.listOf.dElements.filter(d=>d!==dElement)
           dElement.remove()
           // uvolneni elementu
           delete dElement
