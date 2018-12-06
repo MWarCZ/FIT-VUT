@@ -81,16 +81,17 @@ const App = function (idOfDrawingDiv, width=1000, height=1000 ) {
     }
   })
   this.draw.on('mousemove', (e)=>{
-    console.log('draw mousemove')
+    console.log('draw mousemove ['+ e.offsetX + ', ' + e.offsetY + ']')
+    // console.log(e)
     switch(this.nowMode) {
       case MODE.ADD:
         if (this.tmpElement) {
-          this.tmpElement.group.center(e.offsetX, e.offsetY)
+          this.tmpElement.group.center(e.layerX, e.layerY)
         }
         break;
       case MODE.ARROW:
         if (this.tmpElement) {
-          this.tmpElement.group.move(e.offsetX+3, e.offsetY+3)
+          this.tmpElement.group.move(e.layerX+3, e.layerY+3)
         }
         if (this.tmpConn) {
           this.tmpConn.update()
@@ -201,7 +202,7 @@ App.prototype = {
   createNewDElement: function (e, draw, factoryFunction = DElementFactory.Rect) {
     console.log('DElementManager create: ', e)
     let dElement = factoryFunction(draw)
-    dElement.group.center(e.offsetX, e.offsetY)
+    dElement.group.center(e.layerX, e.layerY)
     this.listOf.dElements.push(dElement)
 
     // Akce pro element na plose
@@ -341,8 +342,8 @@ App.prototype = {
       switch(this.nowMode) {
         case MODE.SELECT:
           if(isMoved && !!this.selectedElement) {
-            let x = e.offsetX - this.selectedElement.group.x()+5
-            let y = e.offsetY - this.selectedElement.group.y()+5
+            let x = e.layerX - this.selectedElement.group.x()+5
+            let y = e.layerY - this.selectedElement.group.y()+5
             this.selectedElement.resize(x, y);
             this.listOf.conns.forEach(con => {
               con.update()

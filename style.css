@@ -37,7 +37,7 @@
   background: red;
 
   /* size */
-  height: 100px;
+  height: 60px;
   width: 100%;
 
   /* flex */
@@ -53,6 +53,8 @@
 
   /* flex root */
   display: flex;
+
+  height: 1px;
 }
 
 /**
@@ -228,6 +230,7 @@ input:checked + label.elementgroup_btn {
   margin: 0px;
   outline: black 3px solid;
   background: transparent;
+  height: auto;
 }
 
 .tool_box {
