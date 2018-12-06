@@ -99,8 +99,8 @@
 
   var app = new App('draw')
 
-var rect = app.draw.rect(100, 100).attr({ fill: '#f0f' });
-var rect2 = app.draw.rect(100, 100).x(300).attr({ fill: '#0ff' });
+//var rect = app.draw.rect(100, 100).attr({ fill: '#f0f' });
+//var rect2 = app.draw.rect(100, 100).x(300).attr({ fill: '#0ff' });
 //rect.selectize()
 
 
@@ -111,27 +111,43 @@ var tools = [
   document.getElementById('tool2_btn'),
   document.getElementById('tool3_btn'),
 ]
-tools[0].onchange = () => {app.changeMode(MODE.SELECT);}
-tools[1].onchange = () => {
-  app.changeMode(MODE.ARROW);
-  app.selectElement(undefined)
+tools[0].onchange = () => {
+  app.changeMode(MODE.SELECT)
+  app.changeNewElementFactory(false)
 }
-tools[2].onchange = () => {app.changeMode(MODE.REMOVE);}
-tools[3].onchange = () => {app.changeMode(MODE.TEXT);}
+tools[1].onchange = () => {
+  app.changeMode(MODE.ARROW)
+  app.selectElement(undefined)
+  app.changeNewElementFactory(DElementFactory.Empty)
+}
+tools[2].onchange = () => {
+  app.changeMode(MODE.REMOVE)
+  app.changeNewElementFactory(false)
+}
+tools[3].onchange = () => {
+  app.changeMode(MODE.TEXT)
+  app.changeNewElementFactory(false)
+}
 
 
 // Generovani výberu elementu pro vlozeni
 var arrDElementsFactory = [
   DElementFactory.Rect,
-  DElementFactory.Ellipse
+  DElementFactory.Ellipse,
+  DElementFactory.Rect,
+  DElementFactory.Ellipse,
+  DElementFactory.Rect,
+  DElementFactory.Ellipse,
 ]
 arrDElementsFactory.forEach(factory => {
   let itemsvg = SVG('elementgroup0_box')
   let dElement = factory(itemsvg)
-  let elementType = itemsvg.use(dElement.group).move(0,0)
+  dElement.group.move(10,10)
+  //let elementType = itemsvg.use(dElement.group).move(10,10)
 
-  elementType.on('click', (e)=>{
+  dElement.group.on('click', (e)=>{
     if (app.nowMode === MODE.ADD) {
+      app.changeNewElementFactory(false)
       app.changeMode(app.oldMode)
     } else {
       app.changeNewElementFactory(factory)

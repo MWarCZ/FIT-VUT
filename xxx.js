@@ -33,7 +33,11 @@ const App = function (idOfDrawingDiv, width=1000, height=1000 ) {
   this.selectedElement = undefined
 
   // Novy element pro pridani do diagramu
-  this.newElementFactory = DElementFactory.Rect
+  this.newElementFactory = DElementFactory.Empty
+
+  // TODO
+  this.tmpElement = undefined // this.newElementFactory(this.draw)
+  this.tmpConn = undefined
 
   // Kreslici plocha => Akce
   this.draw.on('click', e=>{
@@ -42,6 +46,8 @@ const App = function (idOfDrawingDiv, width=1000, height=1000 ) {
       case MODE.ADD:
         this.createNewDElement(e, this.drawGroup, this.newElementFactory);
         this.changeMode(this.oldMode)
+        this.tmpElement.remove()
+        this.tmpElement = undefined
         break;
     }
   })
@@ -55,6 +61,24 @@ const App = function (idOfDrawingDiv, width=1000, height=1000 ) {
         break;
     }
   })
+  this.draw.on('mousemove', (e)=>{
+    console.log('draw mousemove')
+    switch(this.nowMode) {
+      case MODE.ADD:
+        if (this.tmpElement) {
+          this.tmpElement.group.center(e.offsetX, e.offsetY)
+        }
+        break;
+      case MODE.ARROW:
+        if (this.tmpElement) {
+          this.tmpElement.group.move(e.offsetX+3, e.offsetY+3)
+        }
+        if (this.tmpConn) {
+          this.tmpConn.update()
+        }
+        break;
+    } // switch
+  });
 
 } // const App
 App.prototype = {
@@ -87,8 +111,19 @@ App.prototype = {
   }, // selectElement
 
   changeNewElementFactory: function (dElementFactory) {
-    this.newElementFactory = dElementFactory
     console.log('Change newElementFactory.')
+    this.newElementFactory = dElementFactory
+    if (dElementFactory) {
+      this.tmpElement = this.newElementFactory(this.draw)
+    } else {
+      // Smazani docasneho spoje/sipky
+      if (this.tmpConn) {
+        this.removeConnection(this.tmpConn)
+      }
+      // smazani docasneho elementu
+      this.tmpElement.remove()
+      this.tmpElement = undefined
+    }
   }, // changeNewElementFactory
 
   createConnection: function(dElement1, dElement2, click_callback) {
@@ -144,7 +179,7 @@ App.prototype = {
   createNewDElement: function (e, draw, factoryFunction = DElementFactory.Rect) {
     console.log('DElementManager create: ', e)
     let dElement = factoryFunction(draw)
-    dElement.group.move(e.offsetX, e.offsetY)
+    dElement.group.center(e.offsetX, e.offsetY)
     this.listOf.dElements.push(dElement)
 
     // Akce pro element na plose
@@ -168,8 +203,12 @@ App.prototype = {
 
         case MODE.ARROW:
           if (!!this.selectedElement) {
+            // Smazani docasne sipky
+            this.removeConnection(this.tmpConn)
+
             // Pokud jsou vzbrane elementy rozdilne
             if (this.selectedElement !== dElement) {
+
               // Vytvoreni propoje/sipky
               let conn = this.createConnection(this.selectedElement, dElement)
               // Akce pro propoj
@@ -194,6 +233,9 @@ App.prototype = {
           } else {
             // Vybere se prvni element se kterim se spojuje
             this.selectElement(dElement)
+            // Vytvoreni docasne sipky
+            this.tmpConn = this.createConnection(this.selectedElement, this.tmpElement)
+
           }
           break;
       } // switch
@@ -261,7 +303,7 @@ App.prototype = {
       })
     });
     this.draw.on('mousemove', (e)=>{
-      console.log('draw mousemove')
+      // console.log('draw mousemove')
       switch(this.nowMode) {
         case MODE.SELECT:
           if(isMoved && !!this.selectedElement) {
@@ -299,6 +341,25 @@ DElement.prototype = {
 
 const DElementFactory = {
   // svg: new SVG('elementgroup0_box').size(1, 1),
+  Empty (draw) {
+    let group = draw.group();
+    // Vysledny DElement
+    let dElement = new DElement(group)
+
+    let rec = group.rect(1, 1).attr({
+      fill: '#000',
+      //stroke: '#000',
+      //'stroke-width': 3,
+    });
+
+    dElement.items = [ rec ]
+
+    dElement.remove = function () {
+      group.remove()
+    }
+
+    return dElement
+  },
 
   Rect (draw) {
     let size = [150, 100];
@@ -315,6 +376,8 @@ const DElementFactory = {
 
     let rec = group.rect(size[0], size[1]).attr({
       fill: '#ffff00',
+      stroke: '#000',
+      'stroke-width': 3,
     });
 
     let txt = group.text("Nejaky\ntext.").move(10,10);
@@ -354,7 +417,7 @@ const DElementFactory = {
     let refreshOutline = function () {
       if(dElement.selected) {
         outline.attr({
-          'stroke-width': 5,
+          'stroke-width': 8,
           stroke: '#00f',
         });
         resize.attr({
@@ -362,7 +425,7 @@ const DElementFactory = {
         });
       } else if(dElement.focused) {
         outline.attr({
-          'stroke-width': 5,
+          'stroke-width': 8,
           stroke: '#f00',
         });
       } else {
@@ -402,6 +465,8 @@ const DElementFactory = {
 
     let rec = group.ellipse(size[0], size[1]).attr({
       fill: '#ffff00',
+      stroke: '#000',
+      'stroke-width': 3,
     });
 
     let resize = group.polygon('20,0 0,20 20,20').attr({
