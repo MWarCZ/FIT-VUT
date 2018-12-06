@@ -37,7 +37,7 @@
   background: red;
 
   /* size */
-  height: 50px;
+  height: 100px;
   width: 100%;
 
   /* flex */
@@ -215,13 +215,21 @@ input:checked + label.elementgroup_btn {
   flex-flow: wrap;
 }
 
-
-svg {
+/*
+#draw svg {
   display: block;
   margin: 0px;
   outline: black 3px solid;
   background: white;
+} */
+
+.tool_box svg {
+  display: block;
+  margin: 0px;
+  outline: black 3px solid;
+  background: transparent;
 }
+
 .tool_box {
   overflow: auto;
 }

@@ -35,9 +35,28 @@ const App = function (idOfDrawingDiv, width=1000, height=1000 ) {
   // Novy element pro pridani do diagramu
   this.newElementFactory = DElementFactory.Empty
 
-  // TODO
+  // Docasne zobrazovani vyzualnich obektu
   this.tmpElement = undefined // this.newElementFactory(this.draw)
   this.tmpConn = undefined
+
+  // TODO txt
+  this.textEdit = this.draw.foreignObject(200,100).opacity(0).move(0,0).size(1,1)
+  this.text = document.createElement('div')
+  this.text.setAttribute('contenteditable', 'true')
+  this.textEdit.appendChild(this.text, {innerText: 'Text XYZ'})
+  this.text.style.height = '1px'
+  this.text.style.width = '1px'
+  this.text.innerText = ''
+
+  // TODO txt => Akce
+  this.text.onblur = (e) => {
+    this.textEdit.opacity(0)
+    this.textEdit.move(0,0)
+    this.textEdit.size(1,1)
+    this.text.style.height = '1px'
+    this.text.style.width = '1px'
+    this.text.innerText = ''
+  }
 
   // Kreslici plocha => Akce
   this.draw.on('click', e=>{
@@ -115,14 +134,17 @@ App.prototype = {
     this.newElementFactory = dElementFactory
     if (dElementFactory) {
       this.tmpElement = this.newElementFactory(this.draw)
+      this.tmpElement.group.opacity(0.7)
     } else {
       // Smazani docasneho spoje/sipky
       if (this.tmpConn) {
         this.removeConnection(this.tmpConn)
       }
       // smazani docasneho elementu
-      this.tmpElement.remove()
-      this.tmpElement = undefined
+      if (this.tmpElement) {
+        this.tmpElement.remove()
+        this.tmpElement = undefined
+      }
     }
   }, // changeNewElementFactory
 
@@ -188,6 +210,18 @@ App.prototype = {
       switch(this.nowMode) {
         case MODE.SELECT:
           this.selectElement(dElement)
+          break;
+
+        case MODE.TEXT:
+          // TODO txt
+          this.selectElement(dElement)
+          this.textEdit.opacity(1)
+          this.textEdit.move(dElement.group.x(), dElement.group.y())
+          this.textEdit.size(dElement.size[0], dElement.size[1])
+          this.text.style.height = dElement.size[1] + 'px'
+          this.text.style.width = dElement.size[0] + 'px'
+          this.text.innerText = ''
+          this.text.focus()
           break;
 
         case MODE.REMOVE:
@@ -331,6 +365,7 @@ const DElement = function (svgGroup, svgItems = []) {
   this.resizer = undefined
   this.selected = false
   this.focused = false
+  this.size = [0,0]
 } // const DElement
 DElement.prototype = {
   resize () { console.log('DElement default resize.') },
@@ -363,9 +398,10 @@ const DElementFactory = {
 
   Rect (draw) {
     let size = [150, 100];
-    let group = draw.group();
+    let group = draw.group()
     // Vysledny DElement
     let dElement = new DElement(group)
+    dElement.size = size
 
     let outline = group.rect(size[0], size[1]).attr({
       fill: 'transparent',
@@ -400,6 +436,7 @@ const DElementFactory = {
     dElement.resize = function (w, h) {
       if (w<0 || h<0)
         return
+      dElement.size=[w,h];
       rec.size(w,h);
       outline.size(w,h);
       resize.x( w-resize.width() );
@@ -455,6 +492,7 @@ const DElementFactory = {
     let group = draw.group();
     // Vysledny DElement
     let dElement = new DElement(group)
+    dElement.size=[size[0], size[1]];
 
     let outline = group.rect(size[0], size[1]).attr({
       fill: 'transparent',
@@ -487,6 +525,7 @@ const DElementFactory = {
     dElement.resize = function (w, h) {
       if (w<0 || h<0)
         return
+      dElement.size=[w,h];
       let x = rec.x()
       let y = rec.y()
       rec.size(w,h);
