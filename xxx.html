@@ -172,7 +172,7 @@ arrDElementsFactory.forEach(factory => {
   dElement.group.move(10,10)
   //let elementType = itemsvg.use(dElement.group).move(10,10)
 
-  dElement.group.on('click', (e)=>{
+  dElement.group.on('mousedown', (e)=>{
     if (app.nowMode === MODE.ADD) {
       app.changeNewElementFactory(false)
       app.changeMode(app.oldMode)

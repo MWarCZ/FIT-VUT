@@ -59,8 +59,19 @@ const App = function (idOfDrawingDiv, width=1000, height=1000 ) {
   }
 
   // Kreslici plocha => Akce
-  this.draw.on('click', e=>{
-    console.log('draw click')
+  // this.draw.on('click', e=>{
+  //   console.log('draw click')
+  //   switch(this.nowMode) {
+  //     case MODE.ADD:
+  //       this.createNewDElement(e, this.drawGroup, this.newElementFactory);
+  //       this.changeMode(this.oldMode)
+  //       this.tmpElement.remove()
+  //       this.tmpElement = undefined
+  //       break;
+  //   }
+  // })
+  this.draw.on('mouseup', e=>{
+    console.log('draw mouseup')
     switch(this.nowMode) {
       case MODE.ADD:
         this.createNewDElement(e, this.drawGroup, this.newElementFactory);
@@ -70,15 +81,16 @@ const App = function (idOfDrawingDiv, width=1000, height=1000 ) {
         break;
     }
   })
-  this.draw.on('mouseup', e=>{
-    console.log('draw mouseup')
+  this.draw.on('mousedown', e=>{
+    console.log('draw mousedown')
     switch(this.nowMode) {
       case MODE.SELECT:
         if(!!this.selectedElement) {
-          this.selectElement(undefined)
+          // TODO deselect select
+          //this.selectElement(undefined)
         }
         break;
-    }
+      }
   })
   this.draw.on('mousemove', (e)=>{
     console.log('draw mousemove ['+ e.offsetX + ', ' + e.offsetY + ']')
@@ -209,9 +221,9 @@ App.prototype = {
     dElement.group.on('click', e => {
       console.log('dElement click')
       switch(this.nowMode) {
-        case MODE.SELECT:
-          this.selectElement(dElement)
-          break;
+        // case MODE.SELECT:
+        //   //this.selectElement(dElement)
+        //   break;
 
         case MODE.TEXT:
           // TODO txt
@@ -223,6 +235,88 @@ App.prototype = {
           this.text.style.width = dElement.size[0] + 'px'
           this.text.innerText = ''
           this.text.focus()
+          break;
+
+        // case MODE.REMOVE:
+        //   this.selectElement(undefined)
+        //   // Smazani sipek mezi elementy
+        //   this.removeConnectionsByDElement(dElement)
+        //   // smazani elementu z obrazku
+        //   this.listOf.dElements = this.listOf.dElements.filter(d=>d!==dElement)
+        //   dElement.remove()
+        //   // uvolneni elementu
+        //   delete dElement
+        //   break;
+
+        // case MODE.ARROW:
+        //   if (!!this.selectedElement) {
+        //     // Smazani docasne sipky
+        //     this.removeConnection(this.tmpConn)
+
+        //     // Pokud jsou vzbrane elementy rozdilne
+        //     if (this.selectedElement !== dElement) {
+
+        //       // Vytvoreni propoje/sipky
+        //       let conn = this.createConnection(this.selectedElement, dElement)
+        //       // Akce pro propoj
+        //       conn.connector.on('click', (e)=>{
+        //         console.log('conn click')
+        //         if(this.nowMode === MODE.REMOVE) {
+        //           this.removeConnection(conn);
+        //         }
+        //       })
+        //       conn.connector.on('mouseenter', e => {
+        //         console.log('conn mouseenter')
+        //         conn.setConnectorColor('#f00')
+        //       })
+        //       conn.connector.on('mouseleave', e => {
+        //         console.log('conn mouseleave')
+        //         conn.setConnectorColor('#000')
+        //       })
+        //     }
+
+        //     // Uz je spojeni => odebere se vyber
+        //     this.selectElement(undefined)
+        //   } else {
+        //     // Vybere se prvni element se kterim se spojuje
+        //     this.selectElement(dElement)
+        //     // Vytvoreni docasne sipky
+        //     this.tmpConn = this.createConnection(this.selectedElement, this.tmpElement)
+
+        //   }
+        //   break;
+      } // switch
+    }) // click
+    dElement.group.on('mousedown', (e)=>{
+      console.log('dElement mousedown')
+      switch(this.nowMode) {
+        case MODE.SELECT:
+          this.selectElement(dElement)
+          break;
+
+        case MODE.ARROW:
+          // Pokud je vzbran element
+          if (!this.selectedElement) {
+            // Vybere se prvni element se kterim se spojuje
+            this.selectElement(dElement)
+            // Vytvoreni docasne sipky
+            this.tmpConn = this.createConnection(this.selectedElement, this.tmpElement)
+          } else if (this.selectedElement !== dElement) {
+
+          } else {
+            // Smazani docasne sipky
+            this.removeConnection(this.tmpConn)
+            // Uz neni potreba spojeni => odebere se vyber
+            this.selectElement(undefined)
+          }
+          break;
+      }
+    }) // mousedown
+    dElement.group.on('mouseup', (e)=>{
+      console.log('dElement mouseup')
+      switch(this.nowMode) {
+        case MODE.SELECT:
+          this.selectElement(dElement)
           break;
 
         case MODE.REMOVE:
@@ -237,67 +331,46 @@ App.prototype = {
           break;
 
         case MODE.ARROW:
-          if (!!this.selectedElement) {
+          // Pokud jsou vzbrane elementy rozdilne
+          if (this.selectedElement && this.selectedElement !== dElement) {
             // Smazani docasne sipky
             this.removeConnection(this.tmpConn)
 
-            // Pokud jsou vzbrane elementy rozdilne
-            if (this.selectedElement !== dElement) {
-
-              // Vytvoreni propoje/sipky
-              let conn = this.createConnection(this.selectedElement, dElement)
-              // Akce pro propoj
-              conn.connector.on('click', (e)=>{
-                console.log('conn click')
-                if(this.nowMode === MODE.REMOVE) {
-                  this.removeConnection(conn);
-                }
-              })
-              conn.connector.on('mouseenter', e => {
-                console.log('conn mouseenter')
-                conn.setConnectorColor('#f00')
-              })
-              conn.connector.on('mouseleave', e => {
-                console.log('conn mouseleave')
-                conn.setConnectorColor('#000')
-              })
-            }
-
+            // Vytvoreni propoje/sipky
+            let conn = this.createConnection(this.selectedElement, dElement)
+            // Akce pro propoj
+            conn.connector.on('mouseup', (e)=>{
+              console.log('conn mouseup')
+              if(this.nowMode === MODE.REMOVE) {
+                this.removeConnection(conn);
+              }
+            })
+            conn.connector.on('mouseenter', e => {
+              console.log('conn mouseenter')
+              conn.setConnectorColor('#f00')
+            })
+            conn.connector.on('mouseleave', e => {
+              console.log('conn mouseleave')
+              conn.setConnectorColor('#000')
+            })
             // Uz je spojeni => odebere se vyber
             this.selectElement(undefined)
           } else {
-            // Vybere se prvni element se kterim se spojuje
-            this.selectElement(dElement)
-            // Vytvoreni docasne sipky
-            this.tmpConn = this.createConnection(this.selectedElement, this.tmpElement)
-
+            // Smazani docasne sipky
+            //this.removeConnection(this.tmpConn)
+            // Uz neni potreba spojeni => odebere se vyber
+            //this.selectElement(undefined)
           }
-          break;
-      } // switch
-    }) // click
-    dElement.group.on('mousedown', (e)=>{
-      console.log('dElement mousedown')
-      switch(this.nowMode) {
-        case MODE.SELECT:
-          this.selectElement(dElement)
-          break;
-      }
-    }) // mousedown
-    dElement.group.on('mouseup', (e)=>{
-      console.log('dElement mouseup')
-      switch(this.nowMode) {
-        case MODE.MOVE:
-          //changeMode(MODE.SELECT);
           break;
       }
     }) // mouseup
     dElement.group.on('mouseenter', e => {
+      console.log('dElement mouseenter')
       switch(this.nowMode) {
         case MODE.SELECT:
           dElement.group.draggy()
           break;
       }
-      console.log('dElement mouseenter')
       dElement.focus(true)
     }) // mouseenter
     dElement.group.on('mouseleave', e => {
@@ -342,6 +415,7 @@ App.prototype = {
       switch(this.nowMode) {
         case MODE.SELECT:
           if(isMoved && !!this.selectedElement) {
+            console.log('draw mousemove: ', this.selectedElement)
             let x = e.layerX - this.selectedElement.group.x()+5
             let y = e.layerY - this.selectedElement.group.y()+5
             this.selectedElement.resize(x, y);
