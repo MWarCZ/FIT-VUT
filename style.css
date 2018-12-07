@@ -1,4 +1,8 @@
 
+* {
+  box-sizing: border-box;
+}
+
 .noselect {
   -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
@@ -84,11 +88,15 @@
   order: 0;
 
   /* grid root */
-  display: grid;
-  grid-template-rows: 80px 80px auto;
+  /* display: grid; */
+  /* grid-template-rows: 80px 80px auto; */
 
   border: black 1px solid;
 
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: flex-start;
 }
 
 
@@ -102,6 +110,9 @@ label.tool_btn {
   background-color: lightskyblue;
 
   display: inline-block;
+
+  height: 80px;
+  width: 50%;
 }
 
 input:checked + label.tool_btn {
@@ -111,7 +122,7 @@ input:checked + label.tool_btn {
 
 #tool0 {
   /* grid item */
-  grid-row: 1;
+  /* grid-row: 1; */
   background-image: url(img/cursor.svg);
   background-size: auto;
   background-repeat: no-repeat;
@@ -119,7 +130,7 @@ input:checked + label.tool_btn {
 }
 #tool1 {
   /* grid item */
-  grid-row: 1;
+  /* grid-row: 1; */
   background-image: url(img/line3.svg);
   background-size: auto;
   background-repeat: no-repeat;
@@ -127,7 +138,7 @@ input:checked + label.tool_btn {
 }
 #tool2 {
   /* grid item */
-  grid-row: 2;
+  /* grid-row: 2; */
   background-image: url(img/trash2.svg);
   background-size: auto;
   background-repeat: no-repeat;
@@ -135,7 +146,7 @@ input:checked + label.tool_btn {
 }
 #tool3 {
   /* grid item */
-  grid-row: 2;
+  /* grid-row: 2; */
 }
 
 /**
@@ -147,8 +158,11 @@ input:checked + label.tool_btn {
   display: none;
 
   /* grid item */
-  grid-row: 3;
-  grid-column: 1 / span 2;
+  /* grid-row: 3; */
+  /* grid-column: 1 / span 2; */
+  height: calc(100vh - 160px - 60px);
+
+  width: 100%;
 }
 
 #tool0_btn:checked ~ #tool0_box {

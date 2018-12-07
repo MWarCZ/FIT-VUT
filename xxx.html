@@ -4,6 +4,7 @@
   <title>WFDMW</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
 
   <!-- svg js - js knihovna a jeji pluginy -->
   <link rel="stylesheet" type="text/css" media="screen" href="http://lib.mwarcz.cz/svg.select.js/3.0.1/svg.select.css">
@@ -97,6 +98,7 @@
     <div id="bottom">
       <button id="download_png_btn">PNG</button>
       <button id="download_svg_btn">SVG</button>
+      <span>ěščřžýáíé</span>
     </div>
   </div>
 
@@ -108,6 +110,16 @@ var app = new App('draw')
 //var rect = app.draw.rect(100, 100).attr({ fill: '#f0f' });
 //var rect2 = app.draw.rect(100, 100).x(300).attr({ fill: '#0ff' });
 //rect.selectize()
+
+var xxx = document.getElementById('bottom')
+xxx.addEventListener("mousedown", function(e) {
+  console.log('mousedown: ', e)
+})
+xxx.addEventListener("pointerdown", function(e) {
+  console.log('pointerdown: ', e)
+})
+
+//
 
 var download_png_btn = document.getElementById('download_png_btn')
 download_png_btn.onclick = () => {
