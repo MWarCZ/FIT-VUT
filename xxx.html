@@ -138,21 +138,24 @@ var tools = [
   document.getElementById('tool2_btn'),
   document.getElementById('tool3_btn'),
 ]
-tools[0].onchange = () => {
+tools[0].onclick = () => {
   app.changeMode(MODE.SELECT)
+  app.selectElement(undefined)
   app.changeNewElementFactory(false)
 }
-tools[1].onchange = () => {
+tools[1].onclick = () => {
   app.changeMode(MODE.ARROW)
   app.selectElement(undefined)
   app.changeNewElementFactory(DElementFactory.Empty)
 }
-tools[2].onchange = () => {
+tools[2].onclick = () => {
   app.changeMode(MODE.REMOVE)
+  app.selectElement(undefined)
   app.changeNewElementFactory(false)
 }
-tools[3].onchange = () => {
+tools[3].onclick = () => {
   app.changeMode(MODE.TEXT)
+  app.selectElement(undefined)
   app.changeNewElementFactory(false)
 }
 
@@ -172,7 +175,7 @@ arrDElementsFactory.forEach(factory => {
   dElement.group.move(10,10)
   //let elementType = itemsvg.use(dElement.group).move(10,10)
 
-  dElement.group.on('mousedown', (e)=>{
+  dElement.group.on(AE.DOWN, (e)=>{
     if (app.nowMode === MODE.ADD) {
       app.changeNewElementFactory(false)
       app.changeMode(app.oldMode)
@@ -188,7 +191,7 @@ arrDElementsFactory.forEach(factory => {
   dElement.group.move(10,10)
   //let elementType = itemsvg.use(dElement.group).move(10,10)
 
-  dElement.group.on('click', (e)=>{
+  dElement.group.on(AE.DOWN, (e)=>{
     if (app.nowMode === MODE.ADD) {
       app.changeNewElementFactory(false)
       app.changeMode(app.oldMode)
@@ -204,7 +207,7 @@ arrDElementsFactory.forEach(factory => {
   dElement.group.move(10,10)
   //let elementType = itemsvg.use(dElement.group).move(10,10)
 
-  dElement.group.on('click', (e)=>{
+  dElement.group.on(AE.DOWN, (e)=>{
     if (app.nowMode === MODE.ADD) {
       app.changeNewElementFactory(false)
       app.changeMode(app.oldMode)

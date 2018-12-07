@@ -1,3 +1,18 @@
+const isSupported = function (eventName) {
+  var el = document.createElement('div');
+  eventName = 'on' + eventName;
+  isSup = (eventName in el);
+  return isSup;
+}
+
+const AE = {
+  DOWN: (isSupported('pointerdown'))? 'pointerdown' : 'mousedown',
+  UP: (isSupported('pointerup'))? 'pointerup' : 'mouseup',
+  MOVE: (isSupported('pointermove'))? 'pointermove' : 'mousemove',
+  LEAVE: (isSupported('pointerleave'))? 'pointerleave' : 'mouseleave',
+  ENTER: (isSupported('pointerenter'))? 'pointerenter' : 'mouseenter',
+}
+
 const MODE = {
   SELECT: 'select',
   ADD: 'add',
@@ -70,8 +85,8 @@ const App = function (idOfDrawingDiv, width=1000, height=1000 ) {
   //       break;
   //   }
   // })
-  this.draw.on('mouseup', e=>{
-    console.log('draw mouseup')
+  this.draw.on(AE.UP, e=>{
+    console.log('draw pointerup')
     switch(this.nowMode) {
       case MODE.ADD:
         this.createNewDElement(e, this.drawGroup, this.newElementFactory);
@@ -81,8 +96,8 @@ const App = function (idOfDrawingDiv, width=1000, height=1000 ) {
         break;
     }
   })
-  this.draw.on('mousedown', e=>{
-    console.log('draw mousedown')
+  this.draw.on(AE.DOWN, e=>{
+    console.log('draw pointerdown')
     switch(this.nowMode) {
       case MODE.SELECT:
         if(!!this.selectedElement) {
@@ -92,8 +107,9 @@ const App = function (idOfDrawingDiv, width=1000, height=1000 ) {
         break;
       }
   })
-  this.draw.on('mousemove', (e)=>{
-    console.log('draw mousemove ['+ e.offsetX + ', ' + e.offsetY + ']')
+  this.draw.on(AE.MOVE, (e)=>{
+    //console.log('draw pointermove ['+ e.offsetX + ', ' + e.offsetY + ']')
+    console.log('draw pointermove ['+ e.layerX + ', ' + e.layerY + ']')
     // console.log(e)
     switch(this.nowMode) {
       case MODE.ADD:
@@ -265,12 +281,12 @@ App.prototype = {
         //           this.removeConnection(conn);
         //         }
         //       })
-        //       conn.connector.on('mouseenter', e => {
-        //         console.log('conn mouseenter')
+        //       conn.connector.on('pointerenter', e => {
+        //         console.log('conn pointerenter')
         //         conn.setConnectorColor('#f00')
         //       })
-        //       conn.connector.on('mouseleave', e => {
-        //         console.log('conn mouseleave')
+        //       conn.connector.on('pointerleave', e => {
+        //         console.log('conn pointerleave')
         //         conn.setConnectorColor('#000')
         //       })
         //     }
@@ -287,8 +303,8 @@ App.prototype = {
         //   break;
       } // switch
     }) // click
-    dElement.group.on('mousedown', (e)=>{
-      console.log('dElement mousedown')
+    dElement.group.on(AE.DOWN, (e)=>{
+      console.log('dElement pointerdown')
       switch(this.nowMode) {
         case MODE.SELECT:
           this.selectElement(dElement)
@@ -311,9 +327,9 @@ App.prototype = {
           }
           break;
       }
-    }) // mousedown
-    dElement.group.on('mouseup', (e)=>{
-      console.log('dElement mouseup')
+    }) // pointerdown
+    dElement.group.on(AE.UP, (e)=>{
+      console.log('dElement pointerup')
       switch(this.nowMode) {
         case MODE.SELECT:
           this.selectElement(dElement)
@@ -339,18 +355,18 @@ App.prototype = {
             // Vytvoreni propoje/sipky
             let conn = this.createConnection(this.selectedElement, dElement)
             // Akce pro propoj
-            conn.connector.on('mouseup', (e)=>{
-              console.log('conn mouseup')
+            conn.connector.on(AE.UP, (e)=>{
+              console.log('conn pointerup')
               if(this.nowMode === MODE.REMOVE) {
                 this.removeConnection(conn);
               }
             })
-            conn.connector.on('mouseenter', e => {
-              console.log('conn mouseenter')
+            conn.connector.on(AE.ENTER, e => {
+              console.log('conn pointerenter')
               conn.setConnectorColor('#f00')
             })
-            conn.connector.on('mouseleave', e => {
-              console.log('conn mouseleave')
+            conn.connector.on(AE.LEAVE, e => {
+              console.log('conn pointerleave')
               conn.setConnectorColor('#000')
             })
             // Uz je spojeni => odebere se vyber
@@ -363,59 +379,59 @@ App.prototype = {
           }
           break;
       }
-    }) // mouseup
-    dElement.group.on('mouseenter', e => {
-      console.log('dElement mouseenter')
+    }) // pointerup
+    dElement.group.on(AE.ENTER, e => {
+      console.log('dElement pointerenter')
       switch(this.nowMode) {
         case MODE.SELECT:
           dElement.group.draggy()
           break;
       }
       dElement.focus(true)
-    }) // mouseenter
-    dElement.group.on('mouseleave', e => {
-      console.log('dElement mouseleave')
+    }) // pointerenter
+    dElement.group.on(AE.LEAVE, e => {
+      console.log('dElement pointerleave')
       switch(this.nowMode) {
         case MODE.SELECT:
           dElement.group.draggy(true)
           break;
       }
       dElement.focus(false)
-    }) // mouseleave
+    }) // pointerleave
 
 
     // TODO upravit nejak elegantne resize
     // Resize element
     let isMoved = false;
-    dElement.resizer.on('mouseenter', (e)=>{
-      console.log('resizer mouseenter')
+    dElement.resizer.on(AE.ENTER, (e)=>{
+      console.log('resizer pointerenter')
       if(!!this.selectedElement) {
         this.selectedElement.group.draggy(true)
       }
     });
-    dElement.resizer.on('mouseleave', (e)=>{
-      console.log('resizer mouseleave')
+    dElement.resizer.on(AE.LEAVE, (e)=>{
+      console.log('resizer pointerleave')
       if(!!this.selectedElement) {
         this.selectedElement.group.draggy()
       }
     });
-    dElement.resizer.on('mousedown', (e)=>{
-      console.log('resizer mousedown')
+    dElement.resizer.on(AE.DOWN, (e)=>{
+      console.log('resizer pointerdown')
       isMoved = true;
     });
-    dElement.resizer.on('mouseup', (e)=>{
-      console.log('resizer mouseup')
+    dElement.resizer.on(AE.UP, (e)=>{
+      console.log('resizer pointerup')
       isMoved = false;
       this.listOf.conns.forEach(con => {
         con.update()
       })
     });
-    this.draw.on('mousemove', (e)=>{
-      // console.log('draw mousemove')
+    this.draw.on(AE.MOVE, (e)=>{
+      // console.log('draw pointermove')
       switch(this.nowMode) {
         case MODE.SELECT:
           if(isMoved && !!this.selectedElement) {
-            console.log('draw mousemove: ', this.selectedElement)
+            console.log('draw pointermove: ', this.selectedElement)
             let x = e.layerX - this.selectedElement.group.x()+5
             let y = e.layerY - this.selectedElement.group.y()+5
             this.selectedElement.resize(x, y);
