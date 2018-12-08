@@ -36,19 +36,27 @@
 
         <!-- Nastroj: 0 -->
         <input id="tool0_btn" class="tool_btn" type="radio" name="tool" value="" checked="true" />
-        <label id="tool0" class="tool_btn" for="tool0_btn"></label>
+        <label id="tool0" class="tool_btn tooltip" for="tool0_btn">
+          <span class="tooltiptextright">Výběr a přesouvání elementů.</span>
+        </label>
 
         <!-- Nastroj: 1 -->
         <input id="tool1_btn" class="tool_btn" type="radio" name="tool" value="" />
-        <label id="tool1" class="tool_btn" for="tool1_btn"></label>
+        <label id="tool1" class="tool_btn tooltip" for="tool1_btn">
+          <span class="tooltiptextright">Spojování elementů (šipky).</span>
+        </label>
 
         <!-- Nastroj: 2 -->
         <input id="tool2_btn" class="tool_btn" type="radio" name="tool" value="" />
-        <label id="tool2" class="tool_btn" for="tool2_btn"></label>
+        <label id="tool2" class="tool_btn tooltip" for="tool2_btn">
+          <span class="tooltiptextright">Mazaní elementů a spojů.</span>
+        </label>
 
         <!-- Nastroj: 3 -->
         <input id="tool3_btn" class="tool_btn" type="radio" name="tool" value="" />
-        <label id="tool3" class="tool_btn" for="tool3_btn"></label>
+        <label id="tool3" class="tool_btn tooltip" for="tool3_btn">
+          <span class="tooltiptextright">Uprava textu elementů.</span>
+        </label>
 
         <!-- Panely pro Nastroje ... Toolboxs -->
 
@@ -96,15 +104,15 @@
     </div>
 
     <div id="bottom">
-      <button id="change_toolbar_btn" class="tooltip toolbar_right">
+      <button id="change_toolbar_btn" class="tooltip toolbar_down_btn toolbar_right">
         .
         <span class="tooltiptextup">Změnit pozici bočního panelu.</span>
       </button>
-      <button id="download_png_btn" class="tooltip">
+      <button id="download_png_btn" class="tooltip toolbar_down_btn">
         PNG
         <span class="tooltiptextup">Stáhnout jako PNG.</span>
       </button>
-      <button id="download_svg_btn" class="tooltip">
+      <button id="download_svg_btn" class="tooltip toolbar_down_btn">
         SVG
         <span class="tooltiptextup">Stáhnout jako SVG.</span>
       </button>
@@ -127,10 +135,10 @@ var change_toolbar_btn = document.getElementById('change_toolbar_btn')
 change_toolbar_btn.onclick = function(e) {
   if (panel1.className) {
     panel1.className = ''
-    change_toolbar_btn.className = 'tooltip toolbar_right'
+    change_toolbar_btn.className = 'tooltip toolbar_down_btn toolbar_right'
   } else {
     panel1.className = 'panel1_right'
-    change_toolbar_btn.className = 'tooltip toolbar_left'
+    change_toolbar_btn.className = 'tooltip toolbar_down_btn toolbar_left'
   }
 }
 

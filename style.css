@@ -39,7 +39,8 @@
  * Spodni cast
  */
 #bottom {
-  background: red;
+  background: #efff65;
+  border: 2px black solid;
 
   /* size */
   height: 60px;
@@ -81,6 +82,8 @@
   flex-grow: 1;
 
   position: relative;
+
+  border: 2px black solid;
 }
 
 /**
@@ -128,11 +131,18 @@ label.tool_btn {
   width: 50%;
 
   cursor: pointer;
+  border: 2px black solid;
+}
+label.tool_btn:hover {
+  background-color: #c7e9f7;
 }
 
 input:checked + label.tool_btn {
   /* background: deepskyblue; */
   background-color: orange;
+}
+input:checked + label.tool_btn:hover {
+  background-color: #fbcc77;
 }
 
 #tool0 {
@@ -173,7 +183,8 @@ input:checked + label.tool_btn {
  * Toolboxs
  */
 .tool_box{
-  background: pink;
+  /* background: pink; */
+  background-color: #efff65;
 
   display: none;
 
@@ -183,6 +194,7 @@ input:checked + label.tool_btn {
   height: calc(100vh - 160px - 60px);
 
   width: 100%;
+  border: 2px black solid;
 }
 
 #tool0_btn:checked ~ #tool0_box {
@@ -214,21 +226,44 @@ input.elementgroup_btn {
   display: none;
 }
 label.elementgroup_btn {
-  background: blue;
+  background: skyblue;
 
   display: inline-block;
+
+  border-bottom: 1px black solid;
+  border-top: 2px black solid;
+
+  font-family: 'Helvetica';
+  font-size: 20px;
+  text-align: center;
+
+  cursor: pointer;
+}
+label.elementgroup_btn:hover {
+  background-color: #c7e9f7;
 }
 
 input:checked + label.elementgroup_btn {
-  background: green;
+  background: orange;
 }
-
+input + label.elementgroup_btn:after {
+  content: "\002B";
+  color: black;
+  font-weight: bold;
+  font-size: 24px;
+  float: right;
+  margin-right: 10px;
+}
+input:checked + label.elementgroup_btn:after {
+  content: "\2212";
+}
 
 /**
  * Tool0 - boxy s elementy
  */
 .elementgroup_box{
-  background: #37ffb0;
+  /* background: #37ffb0; */
+  background-color: #efff65; /* selected color #ffd079*/
 
   display: none;
 
@@ -317,9 +352,6 @@ input:checked + label.elementgroup_btn {
 
 /* Tlacitka dolni panel */
 
-#download_png_btn,
-#download_svg_btn,
-#change_toolbar_btn,
 .toolbar_down_btn {
   height:  100%;
   width: 70px;
@@ -331,7 +363,19 @@ input:checked + label.elementgroup_btn {
   font-size: 24px;
   font-weight: bold;
 
+  border: none;
+  border-left: 2px black solid;
+  border-right: 2px black solid;
+  background-color: skyblue;
+
+  cursor: pointer;
+
 }
+
+.toolbar_down_btn:hover {
+  background-color: #c7e9f7;
+}
+
 #bottom > *:first-child {
   margin-left: 50px;
 }
@@ -352,43 +396,81 @@ input:checked + label.elementgroup_btn {
 
 /* Tooltip */
 .tooltip {
-    position: relative;
-    display: inline-block;
-    border-bottom: 1px dotted black;
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
 }
 
 .tooltip .tooltiptextup {
-    font-size: 16px;
-    font-weight: bold;
+  font-size: 16px;
+  font-weight: bold;
+  font-family: 'Helvetica';
 
-    visibility: hidden;
-    width: 120px;
-    background-color: #555;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px 0;
-    position: absolute;
-    z-index: 1;
-    bottom: 125%;
-    left: 50%;
-    margin-left: -60px;
-    opacity: 0;
-    transition: opacity 0.3s;
+  visibility: hidden;
+  width: 120px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
 }
 
 .tooltip .tooltiptextup::after {
-    content: "";
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    margin-left: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: #555 transparent transparent transparent;
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
 }
 
-.tooltip:hover .tooltiptextup {
-    visibility: visible;
-    opacity: 1;
+.tooltip:hover .tooltiptextup,
+.tooltip:hover .tooltiptextright {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* tooltip right */
+
+.tooltip .tooltiptextright {
+  font-size: 16px;
+  font-weight: bold;
+  font-family: 'Helvetica';
+
+  visibility: hidden;
+  width: 120px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  position: absolute;
+  z-index: 1;
+  top: 5%;
+  left: 180%;
+
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptextright::after {
+  content: "";
+  position: absolute;
+  top: 40%;
+  left: -6%;
+  margin-left: -7px;
+  border-width: 7px;
+  border-style: solid;
+  border-color: transparent #555 transparent transparent;
 }
