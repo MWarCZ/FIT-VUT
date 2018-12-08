@@ -116,6 +116,14 @@
         SVG
         <span class="tooltiptextup">Stáhnout jako SVG.</span>
       </button>
+
+      <div class="size_box">
+        Velikost:
+        <input id="input_size_width" type="number" value="1000" min="1" required>
+        X
+        <input id="input_size_height" type="number" value="1000" min="1" required>
+      </div>
+
     </div>
   </div>
 
@@ -143,22 +151,48 @@ change_toolbar_btn.onclick = function(e) {
 }
 
 
-var xxx = document.getElementById('bottom')
-xxx.addEventListener("mousedown", function(e) {
-  console.log('mousedown: ', e)
-})
-xxx.addEventListener("pointerdown", function(e) {
-  console.log('pointerdown: ', e)
-})
+// var xxx = document.getElementById('bottom')
+// xxx.addEventListener("mousedown", function(e) {
+//   console.log('mousedown: ', e)
+// })
+// xxx.addEventListener("pointerdown", function(e) {
+//   console.log('pointerdown: ', e)
+// })
+
+
+var input_size_width = document.getElementById('input_size_width')
+var input_size_height = document.getElementById('input_size_height')
+function changeSvgSize () {
+  var defaultValue = 1000
+  var w = Number(input_size_width.value)
+  w = (w)? w : defaultValue
+  w = (w>0)? w : defaultValue
+  input_size_width.value = w
+
+  var h = Number(input_size_height.value)
+  h = (h)? h : defaultValue
+  h = (h>0)? h : defaultValue
+  input_size_height.value = h
+
+  app.draw.size(w,h)
+}
+input_size_width.onchange = function () { changeSvgSize() }
+input_size_height.onchange = function () { changeSvgSize() }
 
 //
 
 var download_png_btn = document.getElementById('download_png_btn')
 download_png_btn.onclick = () => {
+  app.selectElement(undefined)
+  app.changeNewElementFactory(false)
+
   Save(app.draw.node, 'png')
 }
 var download_svg_btn = document.getElementById('download_svg_btn')
 download_svg_btn.onclick = () => {
+  app.selectElement(undefined)
+  app.changeNewElementFactory(false)
+
   Save(app.draw.node, 'svg')
 }
 

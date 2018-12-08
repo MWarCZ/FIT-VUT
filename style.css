@@ -54,6 +54,7 @@
   /* align-items: center; */
   /* justify-content: space-around; */
 
+  min-width: 730px;
 }
 
 #center {
@@ -73,7 +74,7 @@
  * Cast s kreslící plochou
  */
 #draw {
-  background: yellow;
+  background: gray;
 
   overflow: scroll;
 
@@ -391,6 +392,37 @@ input:checked + label.elementgroup_btn:after {
   background-size: auto;
   background-repeat: no-repeat;
   background-position: center;
+}
+
+/* size_box */
+.size_box {
+  display: inline-flex;
+  align-items: center;
+
+  font-family: 'Helvetica';
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 29px;
+
+  border: none;
+  border-left: 2px black solid;
+  border-right: 2px black solid;
+  background-color: skyblue;
+
+  padding: 0 10px;
+
+  height: 100%;
+  float: right;
+  margin-right: 60px;
+}
+.size_box input {
+  width: 90px;
+
+  font-family: 'Helvetica';
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 29px;
+  text-align: right;
 }
 
 
