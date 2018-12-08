@@ -265,3 +265,14 @@ input:checked + label.elementgroup_btn {
   cursor: nw-resize;
 }
 
+
+foreignObject div {
+    height: auto;
+    width: auto;
+    background: white;
+    display: inline-block;
+    white-space: nowrap;
+
+    font-family: 'Helvetica';
+    font-size: 20px;
+}

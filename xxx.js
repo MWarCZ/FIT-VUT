@@ -55,22 +55,26 @@ const App = function (idOfDrawingDiv, width=1000, height=1000 ) {
   this.tmpConn = undefined
 
   // TODO txt
-  this.textEdit = this.draw.foreignObject(200,100).opacity(0).move(0,0).size(1,1)
+  this.textEdit = this.draw.foreignObject(1,1).opacity(0).move(0,0)
   this.text = document.createElement('div')
   this.text.setAttribute('contenteditable', 'true')
   this.textEdit.appendChild(this.text, {innerText: 'Text XYZ'})
-  this.text.style.height = '1px'
-  this.text.style.width = '1px'
+  //this.text.style.height = 'auto'
+  //this.text.style.width = 'auto'
   this.text.innerText = ''
 
   // TODO txt => Akce
   this.text.onblur = (e) => {
-    this.textEdit.opacity(0)
-    this.textEdit.move(0,0)
-    this.textEdit.size(1,1)
-    this.text.style.height = '1px'
-    this.text.style.width = '1px'
-    this.text.innerText = ''
+    console.log('TEXT BLUR', this.text.innerText)
+    this.blurText()
+    // this.textEdit.opacity(0)
+    // this.textEdit.move(-300,-300)
+    // this.selectedElement.setText(this.text.innerText)
+
+    // this.textEdit.size(1,1)
+    // this.text.style.height = '1px'
+    // this.text.style.width = '1px'
+    // this.text.innerText = ''
   }
 
   // Kreslici plocha => Akce
@@ -130,6 +134,29 @@ const App = function (idOfDrawingDiv, width=1000, height=1000 ) {
 
 } // const App
 App.prototype = {
+  // TODO txt
+  focusText: function () {
+    this.textEdit.opacity(1)
+    this.textEdit.move(
+      this.selectedElement.group.x() + this.selectedElement.textPosition[0],
+      this.selectedElement.group.y() + this.selectedElement.textPosition[1]
+    )
+    this.text.innerText = this.selectedElement.text
+    this.selectedElement.setText('')
+
+    this.text.focus()
+  },
+  // TODO txt
+  blurText: function () {
+    //this.textEdit.opacity(0)
+    //this.textEdit.move(-300,-300)
+    this.textEdit.move(0,0)
+    this.selectedElement.setText(this.text.innerText)
+    //this.text.innerText = ''
+
+    this.selectElement(undefined)
+  },
+
   changeMode: function (newMode=MODE.SELECT) {
     this.oldMode = this.nowMode
     this.nowMode = newMode
@@ -163,7 +190,7 @@ App.prototype = {
     this.newElementFactory = dElementFactory
     if (dElementFactory) {
       this.tmpElement = this.newElementFactory(this.draw)
-      this.tmpElement.group.opacity(0.7)
+      this.tmpElement.group.opacity(0.6).move(0,-300)
     } else {
       // Smazani docasneho spoje/sipky
       if (this.tmpConn) {
@@ -243,14 +270,30 @@ App.prototype = {
 
         case MODE.TEXT:
           // TODO txt
-          this.selectElement(dElement)
-          this.textEdit.opacity(1)
-          this.textEdit.move(dElement.group.x(), dElement.group.y())
-          this.textEdit.size(dElement.size[0], dElement.size[1])
-          this.text.style.height = dElement.size[1] + 'px'
-          this.text.style.width = dElement.size[0] + 'px'
-          this.text.innerText = ''
-          this.text.focus()
+          if (this.selectedElement !== dElement) {
+            this.selectElement(dElement)
+            this.focusText()
+          } else {
+            this.blurText()
+          }
+
+          // this.textEdit.opacity(1)
+
+          // this.textEdit.move(
+          //   dElement.group.x() + dElement.textPosition[0],
+          //   dElement.group.y() + dElement.textPosition[1]
+          // )
+          // this.text.innerText = dElement.text
+          // this.text.style.height = 'auto'
+          // this.text.style.width = 'auto'
+
+          // this.textEdit.move(dElement.group.x(), dElement.group.y())
+          // this.textEdit.size(dElement.size[0], dElement.size[1])
+          // this.text.style.height = dElement.size[1] + 'px'
+          // this.text.style.width = dElement.size[0] + 'px'
+          // this.text.innerText = ''
+
+          // this.text.focus()
           break;
 
         // case MODE.REMOVE:
@@ -457,11 +500,17 @@ const DElement = function (svgGroup, svgItems = []) {
   this.selected = false
   this.focused = false
   this.size = [0,0]
+  this.text = ''
+  this.textPosition = [0,0]
 } // const DElement
 DElement.prototype = {
   resize () { console.log('DElement default resize.') },
   remove () { console.log('DElement default remove.') },
   select () { console.log('DElement default select.') },
+  setText (text) {
+    console.log('DElement default setText.')
+    this.text = text
+  },
 } // DElement.prototype
 
 
@@ -493,6 +542,8 @@ const DElementFactory = {
     // Vysledny DElement
     let dElement = new DElement(group)
     dElement.size = size
+    dElement.textPosition = [20, 20]
+    dElement.text = 'Toto je text'
 
     let outline = group.rect(size[0], size[1]).attr({
       fill: 'transparent',
@@ -507,9 +558,14 @@ const DElementFactory = {
       'stroke-width': 3,
     });
 
-    let txt = group.text("Nejaky\ntext.").move(10,10);
+    let txt = group.text(dElement.text).move(dElement.textPosition[0], dElement.textPosition[1]);
+    txt.font({
+      family: 'Helvetica',
+      size: '20px',
+    })
+    // let txt = group.text("Nejaky\ntext.").move(20, 20);
 
-    let resize = group.polygon('20,0 0,20 20,20').attr({
+    let resize = group.polygon('25,0 0,25 25,25').attr({
       fill: '#00f',
       opacity: 0,
     });
@@ -520,6 +576,12 @@ const DElementFactory = {
     // Vracena struktura elementu
     dElement.items = [ rec, outline, txt, resize ]
     dElement.resizer = resize
+
+    // TODO txt
+    dElement.setText = function (text) {
+      dElement.text = text
+      txt.text(text)
+    }
 
     /**
      * Funkce elementu pro zmenu velikosti.
