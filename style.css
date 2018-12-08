@@ -47,6 +47,12 @@
 
   /* flex */
   order: 2;
+
+  /* display: flex; */
+  /* flex-direction: row; */
+  /* align-items: center; */
+  /* justify-content: space-around; */
+
 }
 
 #center {
@@ -73,6 +79,8 @@
   /* flex item */
   order: 1;
   flex-grow: 1;
+
+  position: relative;
 }
 
 /**
@@ -100,6 +108,10 @@
   align-content: flex-start;
 }
 
+#panel1.panel1_right {
+  order: 2;
+}
+
 
 /**
  * Nastroje
@@ -114,6 +126,8 @@ label.tool_btn {
 
   height: 80px;
   width: 50%;
+
+  cursor: pointer;
 }
 
 input:checked + label.tool_btn {
@@ -148,7 +162,12 @@ input:checked + label.tool_btn {
 #tool3 {
   /* grid item */
   /* grid-row: 2; */
+  background-image: url(img/text.svg);
+  background-size: auto;
+  background-repeat: no-repeat;
+  background-position: center;
 }
+
 
 /**
  * Toolboxs
@@ -266,7 +285,7 @@ input:checked + label.elementgroup_btn {
 }
 
 
-foreignObject div {
+/* foreignObject div {
     height: auto;
     width: auto;
     background: white;
@@ -275,4 +294,101 @@ foreignObject div {
 
     font-family: 'Helvetica';
     font-size: 20px;
+} */
+
+#textInput {
+    height: auto;
+    width: auto;
+
+    background: transparent;
+
+    display: inline-block;
+    white-space: nowrap;
+
+    font-family: 'Helvetica';
+    font-size: 20px;
+    line-height: 26px;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+
+/* Tlacitka dolni panel */
+
+#download_png_btn,
+#download_svg_btn,
+#change_toolbar_btn,
+.toolbar_down_btn {
+  height:  100%;
+  width: 70px;
+  outline: none;
+
+  margin-left: 12px;
+  margin-right: 12px;
+
+  font-size: 24px;
+  font-weight: bold;
+
+}
+#bottom > *:first-child {
+  margin-left: 50px;
+}
+
+.toolbar_left {
+  background-image: url(img/toolbar_left.svg);
+  background-size: auto;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.toolbar_right {
+  background-image: url(img/toolbar_right.svg);
+  background-size: auto;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+
+/* Tooltip */
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptextup {
+    font-size: 16px;
+    font-weight: bold;
+
+    visibility: hidden;
+    width: 120px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptextup::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptextup {
+    visibility: visible;
+    opacity: 1;
 }

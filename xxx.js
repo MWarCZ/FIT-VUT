@@ -24,13 +24,16 @@ const MODE = {
 }
 
 const App = function (idOfDrawingDiv, width=1000, height=1000 ) {
+  this.parentDraw = document.getElementById(idOfDrawingDiv)
+
   // Hlavni kreslici plocha
   this.draw = new SVG(idOfDrawingDiv).size(width, height).attr({style:'background:#fff'})
   this.drawGroup = this.draw.group()
 
-  // TODO
+  // TODO sipky
   this.drawContainer = this.drawGroup.group()
   this.drawMarkers  = this.drawGroup.group()
+
   // Obekt s poli
   this.listOf = {
     // List vsech propoju mezi elementy diagramu
@@ -55,10 +58,18 @@ const App = function (idOfDrawingDiv, width=1000, height=1000 ) {
   this.tmpConn = undefined
 
   // TODO txt
-  this.textEdit = this.draw.foreignObject(1,1).opacity(0).move(0,0)
+  // this.textEdit = this.draw.foreignObject(1,1).opacity(0).move(0,0)
+  // this.text = document.createElement('div')
+  // this.text.setAttribute('contenteditable', 'true')
+  // this.textEdit.appendChild(this.text, {innerText: 'Text XYZ'})
+
   this.text = document.createElement('div')
+  this.text.setAttribute('id', 'textInput')
   this.text.setAttribute('contenteditable', 'true')
-  this.textEdit.appendChild(this.text, {innerText: 'Text XYZ'})
+  this.parentDraw.appendChild(this.text)
+  this.text.style.left = '0px'
+  this.text.style.top = '0px'
+
   //this.text.style.height = 'auto'
   //this.text.style.width = 'auto'
   this.text.innerText = ''
@@ -136,11 +147,9 @@ const App = function (idOfDrawingDiv, width=1000, height=1000 ) {
 App.prototype = {
   // TODO txt
   focusText: function () {
-    this.textEdit.opacity(1)
-    this.textEdit.move(
-      this.selectedElement.group.x() + this.selectedElement.textPosition[0],
-      this.selectedElement.group.y() + this.selectedElement.textPosition[1]
-    )
+    this.text.style.left = (this.selectedElement.group.x() + this.selectedElement.textPosition[0]) + 'px'
+    this.text.style.top = (this.selectedElement.group.y() + this.selectedElement.textPosition[1]) + 'px'
+
     this.text.innerText = this.selectedElement.text
     this.selectedElement.setText('')
 
@@ -148,11 +157,11 @@ App.prototype = {
   },
   // TODO txt
   blurText: function () {
-    //this.textEdit.opacity(0)
-    //this.textEdit.move(-300,-300)
-    this.textEdit.move(0,0)
+    this.text.style.left = '-300px'
+    this.text.style.top = '-300px'
+
     this.selectedElement.setText(this.text.innerText)
-    //this.text.innerText = ''
+    this.text.innerText = ''
 
     this.selectElement(undefined)
   },

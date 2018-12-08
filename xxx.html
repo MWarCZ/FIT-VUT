@@ -96,9 +96,18 @@
     </div>
 
     <div id="bottom">
-      <button id="download_png_btn">PNG</button>
-      <button id="download_svg_btn">SVG</button>
-      <span>ěščřžýáíé</span>
+      <button id="change_toolbar_btn" class="tooltip toolbar_right">
+        .
+        <span class="tooltiptextup">Změnit pozici bočního panelu.</span>
+      </button>
+      <button id="download_png_btn" class="tooltip">
+        PNG
+        <span class="tooltiptextup">Stáhnout jako PNG.</span>
+      </button>
+      <button id="download_svg_btn" class="tooltip">
+        SVG
+        <span class="tooltiptextup">Stáhnout jako SVG.</span>
+      </button>
     </div>
   </div>
 
@@ -110,6 +119,21 @@ var app = new App('draw')
 //var rect = app.draw.rect(100, 100).attr({ fill: '#f0f' });
 //var rect2 = app.draw.rect(100, 100).x(300).attr({ fill: '#0ff' });
 //rect.selectize()
+//
+
+var panel1 = document.getElementById('panel1')
+
+var change_toolbar_btn = document.getElementById('change_toolbar_btn')
+change_toolbar_btn.onclick = function(e) {
+  if (panel1.className) {
+    panel1.className = ''
+    change_toolbar_btn.className = 'tooltip toolbar_right'
+  } else {
+    panel1.className = 'panel1_right'
+    change_toolbar_btn.className = 'tooltip toolbar_left'
+  }
+}
+
 
 var xxx = document.getElementById('bottom')
 xxx.addEventListener("mousedown", function(e) {
