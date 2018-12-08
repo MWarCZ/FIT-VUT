@@ -75,6 +75,7 @@
  */
 #draw {
   background: gray;
+  background: repeating-linear-gradient(silver 10%, gray 15%, silver 20%);
 
   overflow: scroll;
 

@@ -654,32 +654,46 @@ const DElementFactory = {
     let group = draw.group();
     // Vysledny DElement
     let dElement = new DElement(group)
-    dElement.size=[size[0], size[1]];
+    dElement.size = size
+    dElement.textPosition = [20, 20]
+    dElement.text = 'Toto je text'
 
-    let outline = group.rect(size[0], size[1]).attr({
+    let outline = group.rect(dElement.size[0], dElement.size[1]).attr({
       fill: 'transparent',
       stroke: '#00f',
       'stroke-width': 0,
       'stroke-dasharray': "20,0"
     });
 
-    let rec = group.ellipse(size[0], size[1]).attr({
+    let rec = group.ellipse(dElement.size[0], dElement.size[1]).attr({
       fill: '#ffff00',
       stroke: '#000',
       'stroke-width': 3,
     });
+
+    let txt = group.text(dElement.text).move(dElement.textPosition[0], dElement.textPosition[1]);
+    txt.font({
+      family: 'Helvetica',
+      size: '20px',
+    })
 
     let resize = group.polygon('20,0 0,20 20,20').attr({
       fill: '#00f',
       opacity: 0,
     });
     resize.addClass('resize-nw')
-    resize.x( size[0]-resize.width() );
-    resize.y( size[1]-resize.height() );
+    resize.x( dElement.size[0]-resize.width() );
+    resize.y( dElement.size[1]-resize.height() );
 
     // Vracena struktura elementu
     dElement.items = [ rec, outline, resize ]
     dElement.resizer = resize
+
+    // TODO txt
+    dElement.setText = function (text) {
+      dElement.text = text
+      txt.text(text)
+    }
 
     /**
      * Funkce elementu pro zmenu velikosti.
