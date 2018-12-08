@@ -227,13 +227,16 @@ tools[3].onclick = () => {
 
 
 // Generovani výberu elementu pro vlozeni
+// group0
 var arrDElementsFactory = [
-  DElementFactory.Rect,
-  DElementFactory.Ellipse,
-  DElementFactory.Rect,
-  DElementFactory.Ellipse,
-  DElementFactory.Rect,
-  DElementFactory.Ellipse,
+  DElementFactory.Text,
+  DElementFactory.Rect1,
+  DElementFactory.Rect2,
+  DElementFactory.Ellipse1,
+  DElementFactory.Ellipse2,
+  DElementFactory.Circle1,
+  DElementFactory.Circle2,
+  DElementFactory.Circle3,
 ]
 arrDElementsFactory.forEach(factory => {
   let itemsvg = SVG('elementgroup0_box')
@@ -243,14 +246,20 @@ arrDElementsFactory.forEach(factory => {
 
   dElement.group.on(AE.DOWN, (e)=>{
     if (app.nowMode === MODE.ADD) {
+      app.selectElement(undefined)
       app.changeNewElementFactory(false)
       app.changeMode(app.oldMode)
     } else {
+      app.selectElement(undefined)
       app.changeNewElementFactory(factory)
       app.changeMode(MODE.ADD)
     }
   })
 })
+// group1
+arrDElementsFactory = [
+  DElementFactory.Floppy,
+]
 arrDElementsFactory.forEach(factory => {
   let itemsvg = SVG('elementgroup1_box')
   let dElement = factory(itemsvg)
@@ -267,6 +276,11 @@ arrDElementsFactory.forEach(factory => {
     }
   })
 })
+// group2
+arrDElementsFactory = [
+  DElementFactory.Rect,
+  DElementFactory.Ellipse,
+]
 arrDElementsFactory.forEach(factory => {
   let itemsvg = SVG('elementgroup2_box')
   let dElement = factory(itemsvg)
