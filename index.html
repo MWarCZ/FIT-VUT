@@ -1,17 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>SVG.js</title>
+  <title>WFDMW</title>
 
-  <!-- svg -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+
+  <!-- svg js - js knihovna a jeji pluginy -->
   <link rel="stylesheet" type="text/css" media="screen" href="http://lib.mwarcz.cz/svg.select.js/3.0.1/svg.select.css">
 
   <script src="http://lib.mwarcz.cz/svg.js/2.6.6/svg.min.js"></script>
+  <script src="http://lib.mwarcz.cz/svg.foreignobject.js/1.0.0/svg.foreignobject.js"></script>
   <script src="http://lib.mwarcz.cz/svg.select.js/3.0.1/svg.select.js"></script>
   <script src="http://lib.mwarcz.cz/svg.resize.js/1.4.2/svg.resize.js"></script>
   <!-- <script src="http://lib.mwarcz.cz/svg.draggable.js/2.2.1/svg.draggable.js"></script>-->
   <script src="http://lib.mwarcz.cz/svg.draggy.js/1.1.1/svg.draggy.min.js"></script>
   <script src="http://lib.mwarcz.cz/svg.connectable.js/1.0.2/svg.connectable.min.js"></script>
+  <script src="http://lib.mwarcz.cz/svg.pan-zoom.js/2.8.0/svg.pan-zoom.js"></script>
+
+  <!-- JS s vlastni aplikaci pro platno diagramu. -->
+  <script src="xxx.js"></script>
 
   <!-- -->
   <link rel="stylesheet" type="text/css" media="screen" href="style.css">
@@ -19,7 +27,7 @@
 </head>
 <!-- -->
 <body>
-  <div id="wrapper">
+  <div id="wrapper" class="noselect">
     <div id="center">
       <div id="panel1">
         <!-- Panel nastroju -->
@@ -28,19 +36,27 @@
 
         <!-- Nastroj: 0 -->
         <input id="tool0_btn" class="tool_btn" type="radio" name="tool" value="" checked="true" />
-        <label id="tool0" class="tool_btn" for="tool0_btn">a</label>
+        <label id="tool0" class="tool_btn tooltip" for="tool0_btn">
+          <span class="tooltiptextright">Výběr a přesouvání elementů.</span>
+        </label>
 
         <!-- Nastroj: 1 -->
         <input id="tool1_btn" class="tool_btn" type="radio" name="tool" value="" />
-        <label id="tool1" class="tool_btn" for="tool1_btn">a</label>
+        <label id="tool1" class="tool_btn tooltip" for="tool1_btn">
+          <span class="tooltiptextright">Spojování elementů (šipky).</span>
+        </label>
 
         <!-- Nastroj: 2 -->
         <input id="tool2_btn" class="tool_btn" type="radio" name="tool" value="" />
-        <label id="tool2" class="tool_btn" for="tool2_btn">a</label>
+        <label id="tool2" class="tool_btn tooltip" for="tool2_btn">
+          <span class="tooltiptextright">Mazaní elementů a spojů.</span>
+        </label>
 
         <!-- Nastroj: 3 -->
         <input id="tool3_btn" class="tool_btn" type="radio" name="tool" value="" />
-        <label id="tool3" class="tool_btn" for="tool3_btn">a</label>
+        <label id="tool3" class="tool_btn tooltip" for="tool3_btn">
+          <span class="tooltiptextright">Uprava textu elementů.</span>
+        </label>
 
         <!-- Panely pro Nastroje ... Toolboxs -->
 
@@ -88,65 +104,97 @@
     </div>
 
     <div id="bottom">
+      <button id="change_toolbar_btn" class="tooltip toolbar_down_btn toolbar_right">
+        .
+        <span class="tooltiptextup">Změnit pozici bočního panelu.</span>
+      </button>
+      <button id="download_png_btn" class="tooltip toolbar_down_btn">
+        PNG
+        <span class="tooltiptextup">Stáhnout jako PNG.</span>
+      </button>
+      <button id="download_svg_btn" class="tooltip toolbar_down_btn">
+        SVG
+        <span class="tooltiptextup">Stáhnout jako SVG.</span>
+      </button>
+
+      <div class="size_box">
+        Velikost:
+        <input id="input_size_width" type="number" value="1000" min="1" required>
+        X
+        <input id="input_size_height" type="number" value="1000" min="1" required>
+      </div>
+
     </div>
   </div>
 
   <div id="drawing"></div>
   <script>
 
-// Globalni
-var MODE = {
-  SELECT: 'select',
-  ADD: 'add',
-  REMOVE: 'remove',
-  ARROW: 'arrow',
-  TEXT: 'text',
-}
-var nowMode = MODE.SELECT;
-var oldMode = MODE.SELECT;
+var app = new App('draw')
 
-const changeMode = function (newMode) {
-  oldMode = nowMode;
-  nowMode = newMode;
-  console.log('MODE:', nowMode);
-};
-
-var selectElement = undefined;
-var listElements = []; // nepouzito
-
-const changeSelectElement = function (element) {
-  // Pred zmenou elementu
-  if(!!selectElement) {
-    selectElement.actions.select(false)
-    selectElement.use.draggy(true)
-  }
-  // Zmena elementu
-  selectElement = element;
-  // Po zmene elementu
-  if(!!selectElement) {
-    selectElement.actions.select(true)
-    selectElement.use.draggy()
-  }
-
-  //console.log('Change selected element:', selectElement);
-  console.log('Change selected element:');
-};
-
-var newElement = undefined;
-const changeNewElement = function (element) {
-  newElement = element;
-  console.log('Change new element:', newElement);
-};
-
-// Hlavni kreslici plocha
-var draw = SVG('draw').size(1000, 1000).attr({style:'background:#fff'});
-var drawContainer = draw.group();
-var drawMarkers  = draw.group();
-var listOfConns = { conns: []}
-
-var rect = draw.rect(100, 100).attr({ fill: '#f0f' });
-var rect2 = draw.rect(100, 100).x(300).attr({ fill: '#0ff' });
+//var rect = app.draw.rect(100, 100).attr({ fill: '#f0f' });
+//var rect2 = app.draw.rect(100, 100).x(300).attr({ fill: '#0ff' });
 //rect.selectize()
+//
+
+var panel1 = document.getElementById('panel1')
+
+var change_toolbar_btn = document.getElementById('change_toolbar_btn')
+change_toolbar_btn.onclick = function(e) {
+  if (panel1.className) {
+    panel1.className = ''
+    change_toolbar_btn.className = 'tooltip toolbar_down_btn toolbar_right'
+  } else {
+    panel1.className = 'panel1_right'
+    change_toolbar_btn.className = 'tooltip toolbar_down_btn toolbar_left'
+  }
+}
+
+
+// var xxx = document.getElementById('bottom')
+// xxx.addEventListener("mousedown", function(e) {
+//   console.log('mousedown: ', e)
+// })
+// xxx.addEventListener("pointerdown", function(e) {
+//   console.log('pointerdown: ', e)
+// })
+
+
+var input_size_width = document.getElementById('input_size_width')
+var input_size_height = document.getElementById('input_size_height')
+function changeSvgSize () {
+  var defaultValue = 1000
+  var w = Number(input_size_width.value)
+  w = (w)? w : defaultValue
+  w = (w>0)? w : defaultValue
+  input_size_width.value = w
+
+  var h = Number(input_size_height.value)
+  h = (h)? h : defaultValue
+  h = (h>0)? h : defaultValue
+  input_size_height.value = h
+
+  app.draw.size(w,h)
+}
+input_size_width.onchange = function () { changeSvgSize() }
+input_size_height.onchange = function () { changeSvgSize() }
+
+//
+
+var download_png_btn = document.getElementById('download_png_btn')
+download_png_btn.onclick = () => {
+  app.selectElement(undefined)
+  app.changeNewElementFactory(false)
+
+  Save(app.draw.node, 'png')
+}
+var download_svg_btn = document.getElementById('download_svg_btn')
+download_svg_btn.onclick = () => {
+  app.selectElement(undefined)
+  app.changeNewElementFactory(false)
+
+  Save(app.draw.node, 'svg')
+}
 
 
 // Ovladaci prvky:
@@ -156,315 +204,149 @@ var tools = [
   document.getElementById('tool2_btn'),
   document.getElementById('tool3_btn'),
 ]
-tools[0].onchange = () => {changeMode(MODE.SELECT);}
-tools[1].onchange = () => {
-  changeMode(MODE.ARROW);
-  changeSelectElement(undefined)
+tools[0].onclick = () => {
+  app.changeMode(MODE.SELECT)
+  app.selectElement(undefined)
+  app.changeNewElementFactory(false)
 }
-tools[2].onchange = () => {changeMode(MODE.REMOVE);}
-tools[3].onchange = () => {changeMode(MODE.TEXT);}
-
-/*
-var items = [];
-for(let i = 0; i<10; i++) {
-  let itemsvg = SVG('elementgroup0_box').size(50, 50).attr({style:'background:#fff'});
-  let item = itemsvg.group();
-  let rec = item.rect(100, 100).attr({ fill: '#ff0' });
-  itemsvg.on('click', (e)=> {
-    let cloneItem = item.clone()
-    cloneItem.off();
-    cloneItem.on('click', e=>console.log('aaa'))
-    let newItem = draw.use(cloneItem).move(200, 200).draggy();
-    console.log('xxx');
-    newItem.on('click', (e)=>{
-      newItem.selectize().resize();
-      //newItem.draggy();
-    })
-    draw.use(item).move(300, 100);
-  })
-  items.push(item)
+tools[1].onclick = () => {
+  app.changeMode(MODE.ARROW)
+  app.selectElement(undefined)
+  app.changeNewElementFactory(DElementFactory.Empty)
 }
-*/
-//
-
-// Tato trida => Zatim nepouzito
-class MyElement {
-  constructor(actions, group, items) {
-    this.group = group;
-    this.items = items;
-    this.actions = actions;
-  }
+tools[2].onclick = () => {
+  app.changeMode(MODE.REMOVE)
+  app.selectElement(undefined)
+  app.changeNewElementFactory(false)
+}
+tools[3].onclick = () => {
+  app.changeMode(MODE.TEXT)
+  app.selectElement(undefined)
+  app.changeNewElementFactory(false)
 }
 
 
-const ElementFactory = {
-  svg: new SVG('elementgroup0_box').size(1, 1),
-
-  Rect (svg = this.svg) {
-    let actions = {}
-    let size = [150, 100];
-    let group = svg.group();
-
-    let outline = group.rect(size[0], size[1]).attr({
-      fill: 'transparent',
-      stroke: '#00f',
-      'stroke-width': 0,
-      'stroke-dasharray': "20,0"
-    });
-
-    let rec = group.rect(size[0], size[1]).attr({
-      fill: '#ffff00',
-    });
-
-    let txt = group.text("Nějaký\ntext.").move(10,10);
-
-    let resize = group.polygon('20,0 0,20 20,20').attr({
-      fill: '#00f',
-      opacity: 0,
-    });
-    resize.addClass('resize-nw')
-    resize.x( size[0]-resize.width() );
-    resize.y( size[1]-resize.height() );
-
-    /**
-     * Funkce elementu pro zmenu velikosti.
-     */
-    actions.resize = function (w, h) {
-      rec.size(w,h);
-      outline.size(w,h);
-      resize.x( w-resize.width() );
-      resize.y( h-resize.height() );
-    }
-    /**
-     * Funkce elementu pro zmenu velikosti.
-     */
-    actions.remove = function () {
-      group.remove()
-    }
-    /**
-     * Funkce elementu pro vizualni znazorneni vyberu elementu.
-     */
-    actions.select = function (selectOrUnselect = true) {
-      if(selectOrUnselect) {
-        outline.attr({
-          'stroke-width': 5,
-        });
-        resize.attr({
-          opacity: 1,
-        });
-      } else {
-        outline.attr({
-          'stroke-width': 0,
-        });
-        resize.attr({
-          opacity: 0,
-        });
-      }
-    }
-
-    // Vracena struktura elementu
-    return {
-      actions,
-      group,
-      items: {
-        main: rec,
-        outline,
-        text: txt,
-        resize: resize,
-        use: undefined,
-      }
-    };
-  },
-}
-
-// Výber elementu pro vlozeni
-for(let i = 0; i<1; i++) {
+// Generovani výberu elementu pro vlozeni
+// group0
+var arrDElementsFactory = [
+  DElementFactory.Text,
+  DElementFactory.Rect1,
+  DElementFactory.Rect2,
+  DElementFactory.Ellipse1,
+  DElementFactory.Ellipse2,
+  DElementFactory.Circle1,
+  DElementFactory.Circle2,
+  DElementFactory.Circle3,
+]
+arrDElementsFactory.forEach(factory => {
   let itemsvg = SVG('elementgroup0_box')
-  let {group, items} = ElementFactory.Rect()
-  let elementType = itemsvg.use(group).move(0,0)
-  elementType.on('click', (e)=>{
-    if(nowMode === MODE.ADD){
-      changeMode(oldMode);
+  let dElement = factory(itemsvg)
+  dElement.group.move(10,10)
+  //let elementType = itemsvg.use(dElement.group).move(10,10)
+
+  dElement.group.on(AE.DOWN, (e)=>{
+    if (app.nowMode === MODE.ADD) {
+      app.selectElement(undefined)
+      app.changeNewElementFactory(false)
+      app.changeMode(app.oldMode)
     } else {
-      changeMode(MODE.ADD);
+      app.selectElement(undefined)
+      app.changeNewElementFactory(factory)
+      app.changeMode(MODE.ADD)
     }
   })
-
-}
-
-//
-const ElementManager = {
-
-  create(e, factoryFunction = ElementFactory.Rect) {
-    console.log('pos', e)
-    let element = factoryFunction(draw)
-    let {group, items} = element
-    //let use = draw.use(group).move(e.offsetX, e.offsetY)
-    let use = group.move(e.offsetX, e.offsetY)
-    element.use = use;
-
-    use.on('click', (e)=>{
-      switch(nowMode) {
-        case MODE.SELECT:
-          changeSelectElement(element)
-          break;
-
-        case MODE.REMOVE:
-          changeSelectElement(undefined)
-          // Smazani sipek mezi elementy
-          listOfConns.conns = listOfConns.conns.filter(conn => {
-            if( conn.source === element.group || conn.target === element.group) {
-
-              Connection.RemoveConnection(conn);
-              return false;
-            } else {
-              return true;
-            }
-          })
-          // smazani elementu z obrazku
-          element.actions.remove()
-          // uvolneni elementu
-          delete element
-          break;
-
-        case MODE.ARROW:
-          if(!!selectElement) {
-            // Vytvoreni propoje/sipky
-            let conn = Connection.CreateConnection(selectElement.group, element.group, (e)=>{
-              if(nowMode === MODE.REMOVE) {
-                Connection.RemoveConnection(conn);
-              }
-            })
-            listOfConns.conns.push(conn)
-
-            // Uz je spojeni => odebere se vyber
-            changeSelectElement(undefined)
-          } else {
-            // Vybere se prvni element se kterim se spojuje
-            changeSelectElement(element)
-          }
-          break;
-      }
-
-    }) // click
-    use.on('mousedown', (e)=>{
-      switch(nowMode) {
-        case MODE.SELECT:
-          //changeMode(MODE.MOVE);
-          break;
-      }
-    }) // mousedown
-    use.on('mouseup', (e)=>{
-      switch(nowMode) {
-        case MODE.MOVE:
-          //changeMode(MODE.SELECT);
-          break;
-      }
-    }) // mouseup
-
-
-    // Resize element
-    let isMoved = false;
-    items.resize.on('mouseenter', (e)=>{
-        if(!!selectElement) {
-          selectElement.use.draggy(true)
-        }
-    });
-    items.resize.on('mouseleave', (e)=>{
-        if(!!selectElement) {
-          selectElement.use.draggy()
-        }
-    });
-    items.resize.on('mousedown', (e)=>{
-      isMoved = true;
-    });
-    items.resize.on('mouseup', (e)=>{
-      isMoved = false;
-    });
-    draw.on('mousemove', (e)=>{
-      if(isMoved && !!selectElement) {
-        let x = e.offsetX - selectElement.use.x()+5
-        let y = e.offsetY - selectElement.use.y()+5
-        selectElement.actions.resize(x, y);
-      }
-    });
-
-  } // create
-}
-
-
-
-draw.on('click', e=>{
-  switch(nowMode) {
-    case MODE.ADD:
-      ElementManager.create(e);
-      changeMode(oldMode)
-      break;
-  }
 })
-draw.on('mouseup', e=>{
-  switch(nowMode) {
-    case MODE.SELECT:
-      if(!!selectElement) {
-        changeSelectElement(undefined)
-      }
-      break;
-  }
-})
+// group1
+arrDElementsFactory = [
+  DElementFactory.Floppy,
+]
+arrDElementsFactory.forEach(factory => {
+  let itemsvg = SVG('elementgroup1_box')
+  let dElement = factory(itemsvg)
+  dElement.group.move(10,10)
+  //let elementType = itemsvg.use(dElement.group).move(10,10)
 
-/*
-console.log('A',ElementFactory)
-let tmp = ElementFactory.Rect()
-console.log('B',tmp)
-var x = draw.use(tmp.group).move(200, 200)
-x.on('click', e=>{
-      console.log('xxx',x)
-      // x.selectize().resize();
-      x.draggy();
-    })
-x.style="outline"
-var y = draw.use(ElementFactory.Rect().group).move(80, 200)
-y.on('click', e=>{
-    console.log('yyy',y)
-    // x.selectize().resize();
-    y.draggy();
+  dElement.group.on(AE.DOWN, (e)=>{
+    if (app.nowMode === MODE.ADD) {
+      app.changeNewElementFactory(false)
+      app.changeMode(app.oldMode)
+    } else {
+      app.changeNewElementFactory(factory)
+      app.changeMode(MODE.ADD)
+    }
   })
-*/
+})
+// group2
+arrDElementsFactory = [
+  DElementFactory.Rect,
+  DElementFactory.Ellipse,
+]
+arrDElementsFactory.forEach(factory => {
+  let itemsvg = SVG('elementgroup2_box')
+  let dElement = factory(itemsvg)
+  dElement.group.move(10,10)
+  //let elementType = itemsvg.use(dElement.group).move(10,10)
 
-// Struktura pro vytvareni a odstranovani Propoju/sipek
-// TODO Zatim neni pouzita
-const Connection = {
-  CreateConnection: function(element1, element2, click_callback) {
-    let conn1 = element1.connectable({
-      container: drawContainer,
-      markers: drawMarkers,
-      marker: 'default',
-      targetAttach: 'perifery',
-      sourceAttach: 'perifery',
-      color: '#000',
-    }, element2);
+  dElement.group.on(AE.DOWN, (e)=>{
+    if (app.nowMode === MODE.ADD) {
+      app.changeNewElementFactory(false)
+      app.changeMode(app.oldMode)
+    } else {
+      app.changeNewElementFactory(factory)
+      app.changeMode(MODE.ADD)
+    }
+  })
+})
 
-    // Vizualni uprava sipky
-    conn1.marker.attr({
-      markerWidth: '5',
-      markerHeight: '5',
-      refX: '28',
-    })
-    conn1.connector.attr({'stroke-width':5})
+// ==================================
 
-    // Nastaveni callbacku pro kliknuti
-    if(!!click_callback) {
-      conn1.connector.on('click', click_callback);
+/**
+ * Ukladani svg obrazku (format png a svg)
+ * @param {SVG Element} svg  SVG Element html dokumentu.
+ * @param {String} type Format stazeni obrazku 'png' nebo 'svg'.
+ */
+function Save(svg, type="png") {
+  // Ziskani svg dat
+  let xml = new XMLSerializer().serializeToString(svg);
+  // Vytvoreni base64 url svg reprezentaci
+  let b64Start = 'data:image/svg+xml;base64,';
+  let svg64 = btoa(xml);
+  let image64 = b64Start + svg64;
+
+  //-------------------
+  // Vytvoreni platna pro vykresleni
+  let canvas = document.createElement("canvas");
+  canvas.setAttribute('height',svg.getAttribute('height'));
+  canvas.setAttribute('width',svg.getAttribute('width'));
+  //let context = canvas.getContext("2d");
+
+  // kontrolni vlozeni do stranky
+  //document.body.append(canvas);
+
+  let image = new Image;
+  image.src = image64;
+  image.onload = function() {
+    let a = document.createElement("a");
+    if (type === 'png') {
+      canvas.getContext("2d").drawImage(image, 0, 0);
+      a.href = canvas.toDataURL("image/png");
+      a.download = "fallback.png";
+    } else if (type === 'svg') {
+      a.href = image64
+      a.download = "fallback.svg";
+    } else {
+      canvas.getContext("2d").drawImage(image, 0, 0);
+      a.href = canvas.toDataURL("image/png");
+      a.download = "fallback.png";
     }
 
-    //listOfConns.conns.push(conn1)
-    return conn1;
-  }, // CreateConnection
+    // Firefox vyzaduje aby element byl soucasti stranky pred kliknutim
+    document.body.appendChild(a);
+    a.setAttribute("type", "hidden");
+    a.click();
+    a.remove();
+  };
 
-  RemoveConnection: function(conn) {
-    conn.marker.remove()
-    conn.connector.remove()
-  }, // RemoveConnection
 }
 
 

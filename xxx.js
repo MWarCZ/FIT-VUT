@@ -1,3 +1,8 @@
+/**
+ * Funkce pro zjisteni podpory eventu v danem prohlizeci.
+ * @param  {String}  eventName Nazev hledaneho eventu.
+ * @return {Boolean}           Vraci true pokud event je podporovan jinak vraci false.
+ */
 const isSupported = function (eventName) {
   var el = document.createElement('div');
   eventName = 'on' + eventName;
@@ -5,6 +10,11 @@ const isSupported = function (eventName) {
   return isSup;
 }
 
+/**
+ * Obekt pro abstrakci eventu. To jeky presny typ eventu bude pouzit se rozhodne az v prohlizeci.
+ * Obsahuje jednotlive konstanty pro zakladni eventy ukazatele/mysi.
+ * @type {Object}
+ */
 const AE = {
   DOWN: (isSupported('pointerdown'))? 'pointerdown' : 'mousedown',
   UP: (isSupported('pointerup'))? 'pointerup' : 'mouseup',
@@ -13,6 +23,10 @@ const AE = {
   ENTER: (isSupported('pointerenter'))? 'pointerenter' : 'mouseenter',
 }
 
+/**
+ * Objekt pro abstrakci dostupnych modu, kterych muze interne nabyvat.
+ * @type {Object}
+ */
 const MODE = {
   SELECT: 'select',
   ADD: 'add',
@@ -23,6 +37,14 @@ const MODE = {
   RESIZE: 'resize',
 }
 
+/**
+ * Trida predstavujici samotne jadro aplikace.
+ * Vytvari svg obrazek pro vytvareni diagramu a obsahuje zakladni funkce
+ * a vlastnosti.
+ * @param {String} idOfDrawingDiv Id elementu do ktereho ma byt umistena kreslici svg plocha.
+ * @param {Number} width          Sirka svg elementu.
+ * @param {Number} height         Vyska svg elementu.
+ */
 const App = function (idOfDrawingDiv, width=1000, height=1000 ) {
   this.parentDraw = document.getElementById(idOfDrawingDiv)
 
@@ -58,48 +80,22 @@ const App = function (idOfDrawingDiv, width=1000, height=1000 ) {
   this.tmpConn = undefined
 
   // TODO txt
-  // this.textEdit = this.draw.foreignObject(1,1).opacity(0).move(0,0)
-  // this.text = document.createElement('div')
-  // this.text.setAttribute('contenteditable', 'true')
-  // this.textEdit.appendChild(this.text, {innerText: 'Text XYZ'})
-
+  // Element pro editaci textu v elementech
   this.text = document.createElement('div')
   this.text.setAttribute('id', 'textInput')
   this.text.setAttribute('contenteditable', 'true')
   this.parentDraw.appendChild(this.text)
   this.text.style.left = '0px'
   this.text.style.top = '0px'
-
-  //this.text.style.height = 'auto'
-  //this.text.style.width = 'auto'
   this.text.innerText = ''
 
   // TODO txt => Akce
   this.text.onblur = (e) => {
     console.log('TEXT BLUR', this.text.innerText)
     this.blurText()
-    // this.textEdit.opacity(0)
-    // this.textEdit.move(-300,-300)
-    // this.selectedElement.setText(this.text.innerText)
-
-    // this.textEdit.size(1,1)
-    // this.text.style.height = '1px'
-    // this.text.style.width = '1px'
-    // this.text.innerText = ''
   }
 
   // Kreslici plocha => Akce
-  // this.draw.on('click', e=>{
-  //   console.log('draw click')
-  //   switch(this.nowMode) {
-  //     case MODE.ADD:
-  //       this.createNewDElement(e, this.drawGroup, this.newElementFactory);
-  //       this.changeMode(this.oldMode)
-  //       this.tmpElement.remove()
-  //       this.tmpElement = undefined
-  //       break;
-  //   }
-  // })
   this.draw.on(AE.UP, e=>{
     console.log('draw pointerup')
     switch(this.nowMode) {
@@ -146,6 +142,9 @@ const App = function (idOfDrawingDiv, width=1000, height=1000 ) {
 } // const App
 App.prototype = {
   // TODO txt
+  /**
+   * Funkce pro zahajeni upravy textu u vybraneho elementu.
+   */
   focusText: function () {
     this.text.style.left = (this.selectedElement.group.x() + this.selectedElement.textPosition[0]) + 'px'
     this.text.style.top = (this.selectedElement.group.y() + this.selectedElement.textPosition[1]) + 'px'
@@ -156,16 +155,25 @@ App.prototype = {
     this.text.focus()
   },
   // TODO txt
+  /**
+   * Funkce pro ukonceni upravy textu u vybraneho elementu.
+   */
   blurText: function () {
-    this.text.style.left = '-300px'
-    this.text.style.top = '-300px'
+    if (this.selectedElement) {
+      this.text.style.left = '-300px'
+      this.text.style.top = '-300px'
 
-    this.selectedElement.setText(this.text.innerText)
-    this.text.innerText = ''
-
+      this.selectedElement.setText(this.text.innerText)
+      this.text.innerText = ''
+    }
     this.selectElement(undefined)
   },
 
+  /**
+   * Funkce pro prepinani zvoleneho modu aplikace.
+   * Pred prepnutim modu dojde k ulozeni predchoziho modu.
+   * @param  {MODE} newMode Novy mod, ktery se ma nastavit.
+   */
   changeMode: function (newMode=MODE.SELECT) {
     this.oldMode = this.nowMode
     this.nowMode = newMode
@@ -174,6 +182,10 @@ App.prototype = {
     console.log(' > Old MODE:', this.oldMode)
   }, // changeMode
 
+  /**
+   * Funkce predany DElement nastavy jako vybrany a provede potrebne akce.
+   * @param  {DElement} element Element, ktery ma byt v aplikaci vybrany.
+   */
   selectElement: function (element) {
     // Pred zmenou elementu
     if(!!this.selectedElement) {
@@ -194,6 +206,11 @@ App.prototype = {
     console.log('Change selectedElement.')
   }, // selectElement
 
+  /**
+   * Funkce pro zmenu funkce, ktera vytvari novy element, ktery je mozne pridat do diagramu.
+   * Pokud neni predana zadna factory funkce, tak dojde k odstraneni docasne zobrazovanych objektu.
+   * @param  {DElementFactory.function}  dElementFactory Funkce ktera vraci vytvoreny DElement, ktery je mozne vlozit do diagramu.
+   */
   changeNewElementFactory: function (dElementFactory) {
     console.log('Change newElementFactory.')
     this.newElementFactory = dElementFactory
@@ -213,6 +230,12 @@ App.prototype = {
     }
   }, // changeNewElementFactory
 
+  /**
+   * Funkce vytvori propoj mezi dvema DElementy a prida do seznamu propoju.
+   * @param  {DElement} dElement1   Element od ktereho bude vytvoren spoj.
+   * @param  {DElement} dElement2   Element ke kteremu bude vytvoren spoj.
+   * @return {connection}           Vraci objekt propoje, ktery spojuje dane objekty.
+   */
   createConnection: function(dElement1, dElement2, click_callback) {
     // Vytvoreni propoje mezi elementy 1 a 2
     let conn1 = dElement1.group.connectable({
@@ -242,12 +265,20 @@ App.prototype = {
     return conn1;
   }, // createConnection
 
+  /**
+   * Funkce pro odstraneni konkretniho propoje.
+   * @param  {connection} conn Propoj, ktery ma byt odstaranen z aplikace.
+   */
   removeConnection: function(conn) {
     this.listOf.conns = this.listOf.conns.filter(con => con !== conn)
     conn.marker.remove()
     conn.connector.remove()
   }, // RemoveConnection
 
+  /**
+   * Funkce pro odstraneni propoju podle elementu ke kteremu je pripojen.
+   * @param  {DElement} dElement Element ke kteremu jsou pripojeny propoje.
+   */
   removeConnectionsByDElement(dElement) {
     this.listOf.conns = this.listOf.conns.filter(conn => {
       // Pokud cil nebo zdroj propoje je dElement, tak smazat
@@ -263,6 +294,12 @@ App.prototype = {
     })
   }, // removeConnectionsByDElement
 
+  /**
+   * Funkce vytvori novy DElement a vlozi ho do diagramu.
+   * @param  {MouseEvent | PointerEvent} e  Informace o nastalem eventu (prevazne pozice ukazatele).
+   * @param  {svg} draw            Kreslici plocha na pro kresleni svg elementu.
+   * @param  {DElementFactory.function}  factoryFunction Funkce pro vytvoreni DElementu pro vlozeni do diagramu.
+   */
   createNewDElement: function (e, draw, factoryFunction = DElementFactory.Rect) {
     console.log('DElementManager create: ', e)
     let dElement = factoryFunction(draw)
@@ -279,12 +316,12 @@ App.prototype = {
 
         case MODE.TEXT:
           // TODO txt
-          if (this.selectedElement !== dElement) {
-            this.selectElement(dElement)
-            this.focusText()
-          } else {
-            this.blurText()
-          }
+          // if (this.selectedElement !== dElement) {
+          //   this.selectElement(dElement)
+          //   this.focusText()
+          // } else {
+          //   this.blurText()
+          // }
 
           // this.textEdit.opacity(1)
 
@@ -385,6 +422,17 @@ App.prototype = {
       switch(this.nowMode) {
         case MODE.SELECT:
           this.selectElement(dElement)
+          break;
+
+        case MODE.TEXT:
+          // TODO txt
+          if (this.selectedElement !== dElement) {
+            this.blurText()
+            this.selectElement(dElement)
+            this.focusText()
+          } else {
+            this.blurText()
+          }
           break;
 
         case MODE.REMOVE:
@@ -501,7 +549,11 @@ App.prototype = {
 } // App.prototype
 
 
-/* */
+/**
+ * Trida slouzici jako sablona pro tvormu elementu se kterymi pracuje aplikace.
+ * @param {svg} svgGroup Svg element, ktery predstavuje element ve vizualni podobe v diagramu.
+ * @param {Array}  svgItems Pole s svg podelementy.
+ */
 const DElement = function (svgGroup, svgItems = []) {
   this.group = svgGroup
   this.items = svgItems
@@ -522,7 +574,12 @@ DElement.prototype = {
   },
 } // DElement.prototype
 
-
+/**
+ * Objekt s funkcemi pro generovani DElementu.
+ * DElementu dava vizualni podobu a upravuje chovani jejich funkci,
+ * aby vytvareli odpovidajici vizualni odezvu.
+ * @type {Object}
+ */
 const DElementFactory = {
   // svg: new SVG('elementgroup0_box').size(1, 1),
   Empty (draw) {
