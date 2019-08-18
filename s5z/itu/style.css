@@ -1,0 +1,509 @@
+
+* {
+  box-sizing: border-box;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+
+/* body, div, input {
+  margin: 0;
+  padding: 0;
+} */
+
+#wrapper {
+  background: darkgray;
+
+  /* size + position*/
+  position: absolute;
+  top: 0;
+  /* bottom: 0; */
+  left: 0;
+  right: 0;
+  height: 100vh;
+
+  /* flex root */
+  display: flex;
+  flex-direction: column;
+}
+
+/**
+ * Spodni cast
+ */
+#bottom {
+  background: #efff65;
+  border: 2px black solid;
+
+  /* size */
+  height: 60px;
+  width: 100%;
+
+  /* flex */
+  order: 2;
+
+  /* display: flex; */
+  /* flex-direction: row; */
+  /* align-items: center; */
+  /* justify-content: space-around; */
+
+  min-width: 730px;
+}
+
+#center {
+  background: green;
+
+  /* flex item */
+  order: 1;
+  flex-grow: 1; /* size */
+
+  /* flex root */
+  display: flex;
+
+  height: 1px;
+}
+
+/**
+ * Cast s kreslící plochou
+ */
+#draw {
+  background: gray;
+  background: repeating-linear-gradient(silver 10%, gray 15%, silver 20%);
+
+  overflow: scroll;
+
+  /* flex item */
+  order: 1;
+  flex-grow: 1;
+
+  position: relative;
+
+  border: 2px black solid;
+}
+
+/**
+ * Bocni panel s nastroji
+ */
+#panel1 {
+  background: yellowgreen;
+
+  /* size */
+  width: 190px;
+  min-width: 190px;
+
+  /* flex item */
+  order: 0;
+
+  /* grid root */
+  /* display: grid; */
+  /* grid-template-rows: 80px 80px auto; */
+
+  border: black 1px solid;
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: flex-start;
+}
+
+#panel1.panel1_right {
+  order: 2;
+}
+
+
+/**
+ * Nastroje
+ */
+input.tool_btn {
+  display: none;
+}
+label.tool_btn {
+  background-color: lightskyblue;
+
+  display: inline-block;
+
+  height: 80px;
+  width: 50%;
+
+  cursor: pointer;
+  border: 2px black solid;
+}
+label.tool_btn:hover {
+  background-color: #c7e9f7;
+}
+
+input:checked + label.tool_btn {
+  /* background: deepskyblue; */
+  background-color: orange;
+}
+input:checked + label.tool_btn:hover {
+  background-color: #fbcc77;
+}
+
+#tool0 {
+  /* grid item */
+  /* grid-row: 1; */
+  background-image: url(img/cursor.svg);
+  background-size: auto;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+#tool1 {
+  /* grid item */
+  /* grid-row: 1; */
+  background-image: url(img/line3.svg);
+  background-size: auto;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+#tool2 {
+  /* grid item */
+  /* grid-row: 2; */
+  background-image: url(img/trash2.svg);
+  background-size: auto;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+#tool3 {
+  /* grid item */
+  /* grid-row: 2; */
+  background-image: url(img/text.svg);
+  background-size: auto;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+
+/**
+ * Toolboxs
+ */
+.tool_box{
+  /* background: pink; */
+  background-color: #efff65;
+
+  display: none;
+
+  /* grid item */
+  /* grid-row: 3; */
+  /* grid-column: 1 / span 2; */
+  height: calc(100vh - 160px - 60px);
+
+  width: 100%;
+  border: 2px black solid;
+}
+
+#tool0_btn:checked ~ #tool0_box {
+  /* flex root */
+  display: flex;
+  flex-flow: column;
+}
+#tool1_btn:checked ~ #tool1_box {
+  /* flex root */
+  display: flex;
+  flex-flow: column;
+}
+#tool2_btn:checked ~ #tool2_box {
+  /* flex root */
+  display: flex;
+  flex-flow: column;
+}
+#tool3_btn:checked ~ #tool3_box {
+  /* flex root */
+  display: flex;
+  flex-flow: column;
+}
+
+
+/**
+ * Tool0 - vyber skupin elementu
+ */
+input.elementgroup_btn {
+  display: none;
+}
+label.elementgroup_btn {
+  background: skyblue;
+
+  display: inline-block;
+
+  border-bottom: 1px black solid;
+  border-top: 2px black solid;
+
+  font-family: 'Helvetica';
+  font-size: 20px;
+  text-align: center;
+
+  cursor: pointer;
+}
+label.elementgroup_btn:hover {
+  background-color: #c7e9f7;
+}
+
+input:checked + label.elementgroup_btn {
+  background: orange;
+}
+input + label.elementgroup_btn:after {
+  content: "\002B";
+  color: black;
+  font-weight: bold;
+  font-size: 24px;
+  float: right;
+  margin-right: 10px;
+}
+input:checked + label.elementgroup_btn:after {
+  content: "\2212";
+}
+
+/**
+ * Tool0 - boxy s elementy
+ */
+.elementgroup_box{
+  /* background: #37ffb0; */
+  background-color: #efff65; /* selected color #ffd079*/
+
+  display: none;
+
+  flex-grow: 1;
+}
+
+#elementgroup0_btn:checked ~ #elementgroup0_box {
+  display: flex;
+  flex-direction: column;
+  flex-flow: wrap;
+}
+#elementgroup1_btn:checked ~ #elementgroup1_box {
+  display: flex;
+  flex-direction: column;
+  flex-flow: wrap;
+}
+#elementgroup2_btn:checked ~ #elementgroup2_box {
+  display: flex;
+  flex-direction: column;
+  flex-flow: wrap;
+}
+
+/*
+#draw svg {
+  display: block;
+  margin: 0px;
+  outline: black 3px solid;
+  background: white;
+} */
+
+.tool_box svg {
+  display: block;
+  margin: 0px;
+  outline: black 3px solid;
+  background: transparent;
+  height: auto;
+}
+
+.tool_box {
+  overflow: auto;
+}
+.elementgroup_box {
+  overflow: auto;
+}
+.elementgroup_btn {
+  line-height: 40px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* */
+.resize-nw{
+  cursor: nw-resize;
+}
+
+
+/* foreignObject div {
+    height: auto;
+    width: auto;
+    background: white;
+    display: inline-block;
+    white-space: nowrap;
+
+    font-family: 'Helvetica';
+    font-size: 20px;
+} */
+
+#textInput {
+    height: auto;
+    width: auto;
+
+    background: transparent;
+
+    display: inline-block;
+    white-space: nowrap;
+
+    font-family: 'Helvetica';
+    font-size: 20px;
+    line-height: 26px;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+
+/* Tlacitka dolni panel */
+
+.toolbar_down_btn {
+  height:  100%;
+  width: 70px;
+  outline: none;
+
+  margin-left: 12px;
+  margin-right: 12px;
+
+  font-size: 24px;
+  font-weight: bold;
+
+  border: none;
+  border-left: 2px black solid;
+  border-right: 2px black solid;
+  background-color: skyblue;
+
+  cursor: pointer;
+
+}
+
+.toolbar_down_btn:hover {
+  background-color: #c7e9f7;
+}
+
+#bottom > *:first-child {
+  margin-left: 50px;
+}
+
+.toolbar_left {
+  background-image: url(img/toolbar_left.svg);
+  background-size: auto;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.toolbar_right {
+  background-image: url(img/toolbar_right.svg);
+  background-size: auto;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* size_box */
+.size_box {
+  display: inline-flex;
+  align-items: center;
+
+  font-family: 'Helvetica';
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 29px;
+
+  border: none;
+  border-left: 2px black solid;
+  border-right: 2px black solid;
+  background-color: skyblue;
+
+  padding: 0 10px;
+
+  height: 100%;
+  float: right;
+  margin-right: 60px;
+}
+.size_box input {
+  width: 90px;
+
+  font-family: 'Helvetica';
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 29px;
+  text-align: right;
+}
+
+
+/* Tooltip */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptextup {
+  font-size: 16px;
+  font-weight: bold;
+  font-family: 'Helvetica';
+
+  visibility: hidden;
+  width: 120px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptextup::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptextup,
+.tooltip:hover .tooltiptextright {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* tooltip right */
+
+.tooltip .tooltiptextright {
+  font-size: 16px;
+  font-weight: bold;
+  font-family: 'Helvetica';
+
+  visibility: hidden;
+  width: 120px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  position: absolute;
+  z-index: 1;
+  top: 5%;
+  left: 180%;
+
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptextright::after {
+  content: "";
+  position: absolute;
+  top: 40%;
+  left: -6%;
+  margin-left: -7px;
+  border-width: 7px;
+  border-style: solid;
+  border-color: transparent #555 transparent transparent;
+}
