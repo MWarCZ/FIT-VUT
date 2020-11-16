@@ -1,0 +1,23 @@
+{
+  "name": "aaa",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "font-awesome": "^4.7.0",
+    "framework7": "^3.6.2",
+    "framework7-icons": "^2.0.5",
+    "framework7-vue": "^3.6.2",
+    "material-design-icons": "^3.0.1",
+    "vue": "^2.5.17"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.2.0",
+    "@vue/cli-service": "^3.2.0",
+    "vue-template-compiler": "^2.5.17"
+  }
+}
