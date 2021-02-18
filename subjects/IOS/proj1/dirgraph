@@ -1,0 +1,274 @@
+#!/bin/sh
+POSIXLY_CORRECT=yes
+
+OKOREXIT() {
+	if [ "$?" -ne "0" ] ; then
+		echo "error">&2;
+		exit 1;
+	fi
+}
+
+INDIR="$PWD"
+SET_I="";
+SET_N="0";
+
+IS_GNU="0"
+if date --version >/dev/null 2>&1 ; then
+	IS_GNU="1"
+else
+	IS_GNU="0"
+fi
+
+### Načítání přepínačů
+while getopts :i:n o
+do
+	case "$o" in
+		i)	SET_I="$OPTARG"
+			if [ -z "$SET_I" ] ; then
+				echo "i error">&2;
+				exit 1;
+			fi;;
+		n)	if [ "$SET_N" -eq 1  ] ; then
+				echo "n error">&2;
+				exit 1;
+			fi;
+			SET_N=1;;
+		*)  echo "? error">&2;
+			exit 1;;
+	esac
+done
+OPTIND=$((OPTIND-1))
+shift $OPTIND
+
+### Načítání argumentu
+if [ "1" -eq "$#" ] ; then
+	INDIR="$1"
+elif [ "0" -lt "$#" ]; then
+	echo "$#>1">&2;
+	exit 1
+fi
+
+### Kontrola zda zadaný argument je složka
+if [ -d "$INDIR" ] ; then
+#	echo "$INDIR is dir."
+	printf "";
+else
+	echo "$INDIR is not dir.">&2
+	exit 1;
+fi
+
+### Odfiltrování zbytečností z SET_I
+TMP="$(printf "$SET_I" | cut -c 1)"
+if [ "$TMP" = "^" ] ; then
+	SET_I="$( printf "$SET_I" | cut -c 2- )"
+fi
+TMP="$(printf "$SET_I" | rev | cut -c 1)"
+if [ "$TMP" = "\$" ] ; then
+	SET_I="$( printf "$SET_I" | rev | cut -c 2- | rev )"
+fi
+
+#echo "start"
+
+### Prohledávání adresářů
+OUT1="$(find "$INDIR" -type d -name "$SET_I" -prune -o -type f -name "$SET_I" -prune -o -print 2>/dev/null )"
+OKOREXIT
+
+#echo "000"
+
+TMP="$(printf "$OUT1\n" | while read line ; do
+	printf "\"$line\"\n"
+done )"
+
+### Zjištění typu soborů
+IFS_OLD="$IFS"
+IFS=$"
+"
+OUT2="$(
+for i in $(printf "$OUT1") ; do
+	TMP="$(file -b -- "$i" 2>/dev/null)"
+	OKOREXIT
+	printf "$TMP\n"
+done )"
+IFS="$IFS_OLD"
+
+#echo "001"
+
+### Upravení a spočítání stejných typů souborů
+OUT2="$( printf "$OUT2\n"| while read line
+do  
+	if [ $( printf "$line" | wc -c ) -gt "40" ] ; then 
+		line="$( printf "$line" | cut -c 1-40 )""..."
+	fi
+	printf "$line\n"
+done  | sort -n | uniq -c | sort -nr
+)"
+
+
+#echo "002"
+
+### Počet složek
+NUM_DIRS="$(
+if [ "$IS_GNU" = "1" ] ; then
+	printf "$OUT2" | grep "directory" | cut -c 1-7
+else
+	printf "$OUT2" | grep "directory" | cut -c 1-4
+fi
+)"
+
+NUM_DIRS=$((NUM_DIRS+0))
+
+OUT2="$(printf "$OUT2" | grep -v "directory" )"
+
+#echo "003"
+
+### Počet souborů
+#TMP="$(printf "$OUT2" | cut -c 1-7 )"
+
+TMP="$(
+if [ "$IS_GNU" = "1" ] ; then
+	printf "$OUT2" | cut -c 1-7
+else
+	printf "$OUT2" | cut -c 1-4
+fi
+)"
+
+NUM_FILES=0
+for i in $(printf "$TMP") ; do
+	NUM_FILES=$((NUM_FILES+i))
+done
+
+#echo "004"
+
+### Výpis kořene, souborů, složek
+printf "Root directory: $INDIR\n"
+printf "Directories: $NUM_DIRS\n"
+printf "All files: $NUM_FILES\n"
+
+###
+
+IFS_OLD="$IFS"
+IFS=$"
+"
+OUT3="$(
+for i in $(printf "$OUT1") ; do
+	if [ -f "$i" ] ; then
+		TMP="$(wc -c <"$i" 2> /dev/null)"
+		if [ "$?" -eq "0" ] ; then
+			printf "$TMP\n"
+		fi
+	fi
+done | sort -n )"
+IFS="$IFS_OLD"
+
+### Rozdělení do tříd podle velikosti
+for i in 1 2 3 4 5 6 7 8 9 ; do
+	eval "S_NUM$i=0"
+done
+
+S_STR="100 1024 10240 102400 1048576 10485760 104857600 1073741824"
+S_INDEX=1
+S_MAX=100
+for i in $(printf "$OUT3") ; do
+	if [ "$S_INDEX" -eq 9 ] || [ "$S_MAX" -gt "$i" ] ; then
+		printf "" > /dev/null;
+	else
+		S_INDEX=$((S_INDEX+1))
+		S_MAX=$( eval "printf \"$S_STR\" | cut -d' ' -f$S_INDEX" )
+	fi
+	
+	eval "S_NUM$S_INDEX=\$((S_NUM$S_INDEX+1))"
+done
+
+###
+if [ -t 1 ]; then
+	NUM_MAX=$(tput cols)
+	NUM_MAX=$((NUM_MAX-1))
+else
+	NUM_MAX=79
+fi
+
+### Výpis
+printf "File size histogram:\n"
+
+S_STR="<100 B:<1 KiB:<10 KiB:<100 KiB:<1 MiB:<10 MiB:<100 MiB:<1 GiB:>=1 GiB"
+
+#if [ "$(printf "$OUT3" | wc -c )" -gt "1" ] ; then
+	TMP_PER=1
+	### Normalizace
+	if [ "$SET_N" -eq 1 ] ; then
+		TMP_NOW=0
+		for i in 1 2 3 4 5 6 7 8 9; do
+			if [ "$(eval "printf \$S_NUM$i")" -gt "$TMP_NOW" ]; then
+				TMP_NOW="$(eval "printf \$S_NUM$i")"
+			fi
+		done
+
+		TMP_MAX="$((NUM_MAX-12))"
+		if [ "$TMP_MAX" -lt "$TMP_NOW" ] ; then
+			TMP_PER="$(awk "BEGIN {print $TMP_MAX/$TMP_NOW}" | sed "s/,/\./")"
+		fi
+	fi
+
+
+	for i in 1 2 3 4 5 6 7 8 9; do
+		printf "  %-8s: " "$( printf "$S_STR" | cut -d':' -f$i )"
+
+		TMP_I=1
+		eval "TMP_TO=\"\$S_NUM$i\""
+		TMP_TO="$(awk "BEGIN { printf( \"%.0f\", $TMP_TO*$TMP_PER ) }" )"
+		while [ "$TMP_I" -le "$TMP_TO" ] 
+		do
+			printf "#"
+			TMP_I=$((TMP_I+1))
+		done
+		printf "\n"
+	done
+#fi
+
+
+### Výpis 10 nejčastějších typů
+printf "File type histogram:\n"
+
+if [ "$(printf "$OUT2" | wc -c )" -gt "1" ] ; then
+	OUT2="$(printf "$OUT2" | head -10 )"
+	TMP_PER="1"
+	### Normalizace
+	if [ "$SET_N" -eq 1 ] ; then
+		TMP_NOW="$(printf "$OUT2" | head -1 | cut -c 1-7 )"
+		TMP_MAX="$((NUM_MAX-47))"
+		if [ "$TMP_MAX" -lt "$TMP_NOW" ] ; then
+			TMP_PER="$(awk "BEGIN {print $TMP_MAX/$TMP_NOW}" | sed "s/,/\./")"
+		fi
+	fi
+	### Výpis
+	printf "$OUT2\n" | while read line; do
+		TMP="$(printf "$line" | cut -d' ' -f2- )"
+		printf "  %-43.43s: " "$TMP"
+
+		TMP_TO="$(printf "$line" | cut -d' ' -f1)"
+		TMP_TO="$(awk "BEGIN { printf( \"%.0f\", $TMP_TO*$TMP_PER ) }" )"
+		TMP_I=1
+		while [ "$TMP_I" -le "$TMP_TO" ] ; do
+			printf "#"
+			TMP_I="$((TMP_I+1))"
+		done
+		printf "\n"
+	done
+fi
+
+
+
+#echo "$OUT2"
+#echo "dirs: $NUM_DIRS"
+#echo "files: $NUM_FILES"
+#echo "$TMP"
+
+#for i in $(printf "$OUT1") ; do
+#	printf ">$i\n"
+#	xxx=$((xxx+1))
+#done
+
+#echo "$xxx"
+
+#echo "$(printf "$OUT1" | wc -l)"
+exit 0;

@@ -1,0 +1,56 @@
+
+* {
+    float: none;
+}
+
+/* COOKIES */
+
+#cookies {
+    display: none;
+}
+
+/* HEADER */
+
+#header {
+    display: none;
+}
+
+/* NAV */
+
+#nav {
+    display: none;
+}
+
+h2,h3 {
+    page-break-after: avoid;
+}
+iframe {
+    page-break-inside: avoid;
+}
+
+section article, #news article, #footer article {
+    width: 90%;
+    max-width: 100%;
+    background: transparent;
+    border: black 1px solid;
+    color: black;
+    box-sizing: content-box;
+    box-shadow: none;
+    display: block;
+}
+#news article.small {
+    display: none;
+}
+#content, #footer {
+    background: transparent;
+}
+#footer article, #footer article h3 {
+    text-shadow: none;
+}
+#footer {
+    display: none;
+}
+/* ZPET NAHORU */
+#gotop {
+    display: none;
+}
