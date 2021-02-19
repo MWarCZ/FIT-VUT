@@ -99,7 +99,7 @@
    - [Zdrojové kódy pro frontend](https://github.com/MWarCZ/MWEClient)
 
 ## MITAI (2020/2021)
-1. [AVS - Architektury výpočetních systémů](MITAI/)
+1. [AVS - Architektury výpočetních systémů](subjects/AVS)
    - Hodnocení projektu č.1: 6/15
    - Hodnocení projektu č.2: 20/25
 2. [UPA - Ukládání a příprava dat](https://github.com/xtrnen/UPA-project)
