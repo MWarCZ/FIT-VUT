@@ -74,10 +74,10 @@
 ## BIT3 Zimní semestr (2018/2019)
 1. [IIS - Informační systémy](https://github.com/MWarCZ/iis)
 	- Hodnocení projektu: 30/30
-2. [IMP - Mikroprocesorové a vestavěné systémy](subjects/)
+2. [IMP - Mikroprocesorové a vestavěné systémy](subjects/IMP)
 	- Hodnocení projektu: 14/14
 	- Téma projektu: ESP8266: ovládání LED (IoT, WiFi AP pro mobilní telefon)
-2. [ITU - Tvorba uživatelských rozhraní](subjects/)
+2. [ITU - Tvorba uživatelských rozhraní](subjects/ITU)
 	- Hodnocení projektu: 42/55
 	- Téma projektu: Vizualizace workflow 
 2. [ISA - Síťové aplikace a správa sítí](subjects/ISA)
