@@ -27,78 +27,70 @@
 
 ## BIT1 Letní semestr (2016/2017)
 1. [INC - Návrh číslicových systémů](subjects/INC)
-	- Proj 20/20
+	- Hodnocení projektu: 20/20
 1. [IOS - Operační systémy](subjects/IOS)
-	- Proj1 12/15
-	- Proj2 14/15
+	- Hodnocení projektu č.1: 12/15
+	- Hodnocení projektu č.2: 14/15
 1. [ITW - Tvorba webových stránek](subjects/ITW)
-	- Proj1 20/20
-	- Proj2 30/20
+	- Hodnocení projektu č.1: 20/20
+	- Hodnocení projektu č.2: 30/20
 1. [IVS - Praktické aspekty vývoje software](subjects/IVS)
-	- Proj1 12/18
-	- Proj2-kalkulacka 46/52
+	- Hodnocení projektu č.1: 12/18
+	- Hodnocení projektu č.2: 46/52 (kalkulacka)
 
 ## BIT2 Zimní semestr (2017/2018)
 1. [IAL - Algoritmy](subjects/)
-	- Proj + IFJ 9/10 + 5/5 obhaj
-	- du1 8/10
-	- du2 10/10
+	- Hodnocení projektu: Společný s IFJ 9/10 + 5/5 obhaj
+	- DÚ č.1: 8/10
+	- DÚ č.2: 10/10
 1. [IFJ - Formální jazyky a překladače](https://github.com/MWarCZ/IFJ17)
-	- Proj 15/15 + 4/5 doku + 5/5 obhaj + 0/5 bonus
+	- Hodnocení projektu: 15/15 + 4/5 doku + 5/5 obhaj + 0/5 bonus
+	- Téma projektu: IFJcode17
 1. [INP - Návrh počítačových systémů](subjects/)
-	- Proj1 10/10
-	- Proj2 23/23
+	- Hodnocení projektu č.1: 10/10
+	- Hodnocení projektu č.2: 23/23
 1. [ISS - Signály a systémy](subjects/)
-	- Proj 10.5/12
+	- Hodnocení projektu: 10.5/12
 1. [IPA - Pokročilé asemblery](subjects/)
-	- Proj 22/24
-	- Hra - strelba **
+	- Hodnocení projektu: 22/24
+	- Téma projektu: Hra - strelba **
 
 ## BIT2 Letní semestr (2017/2018)
 1. [IDS - Databázové systémy](subjects/)
-	- Proj 5/5 + 5/5 + 5/5 + 16/19 (max 34)
+	- Hodnocení projektu: 5/5 + 5/5 + 5/5 + 16/19 (max 34)
 1. [IPK - Počítačové komunikace a sítě](subjects/)
-	- Proj1 18/20
-	- Klient-server pro získání informace o uživatelích (Ryšavý)
-	- Proj2 11/20
-	- Bandwidth Measurement (Ryšavý)
-1. [IPP - Principy programovacích jazyků a OOP](subjects/)
-	- Proj 6/6 + 11/14 + bonus 1/5 
-	- gitlab IPPcode18
+	- Hodnocení projektu č.1: 18/20
+	- Téma projektu č.1: Klient-server pro získání informace o uživatelích (Ryšavý)
+	- Hodnocení projektu č.2: 11/20
+	- Téma projektu č.2: Bandwidth Measurement (Ryšavý)
+1. [IPP - Principy programovacích jazyků a OOP]([subjects/](https://gitlab.com/MWarCZ/IPPcode18))
+	- Hodnocení projektu: 6/6 + 11/14 + bonus 1/5 
+	- Téma projektu: IPPcode18
 1. [IZG - Základy počítačové grafiky](subjects/)
-	- Proj 11.3/18
-    - solo projekt
+	- Hodnocení projektu: 11.3/18
 2. [IJA - Seminář Java](https://github.com/MWarCZ/IJA)
-	- Proj 80/94
-    - tym proj
+	- Hodnocení projektu: 80/94
 
 ## BIT3 Zimní semestr (2018/2019)
 1. [IIS - Informační systémy](https://github.com/MWarCZ/iis)
-	- Proj 30/30
-    - tym proj
-1. [IMP - Mikroprocesorové a vestavěné systémy](subjects/)
-	- Proj 14/14
-	- ESP8266: ovládání LED (IoT, WiFi AP pro mobilní telefon)
-    - solo projekt
-	- gitlab ims
-1. [ITU - Tvorba uživatelských rozhraní](subjects/)
-	- Proj 42/55
-	- Vizualizace workflow
-    - semi tym
-1. [ISA - Síťové aplikace a správa sítí](subjects/)
-	- Proj 17/20
-	- Programování síťové služby
-	- Nástroje monitorující a generující zprávy jednoduchých distance-vector protokolů (Dr. Veselý)
-    - solo projekt
+	- Hodnocení projektu: 30/30
+2. [IMP - Mikroprocesorové a vestavěné systémy](subjects/)
+	- Hodnocení projektu: 14/14
+	- Téma projektu: ESP8266: ovládání LED (IoT, WiFi AP pro mobilní telefon)
+2. [ITU - Tvorba uživatelských rozhraní](subjects/)
+	- Hodnocení projektu: 42/55
+	- Téma projektu: Vizualizace workflow 
+2. [ISA - Síťové aplikace a správa sítí](subjects/)
+	- Hodnocení projektu: Proj 17/20
+	- Téma projektu: Nástroje monitorující a generující zprávy jednoduchých distance-vector protokolů (Dr. Veselý)
 
 ## BIT3 Letní semestr (2018/2019)
 ...
 
 ## BIT4 Zimní semestr (2019/2020)
 1. [IMS - Modelování a simulace](subjects/) 
-	- Proj 17/20
-    - 4. Uhlíková stopa v zemědělství, lesnictví a zpracovatelském průmyslu
-    - solo projekt
+	- Hodnocení projektu: 17/20
+    - Téma projektu: 4. Uhlíková stopa v zemědělství, lesnictví a zpracovatelském průmyslu
 
 ## BIT4 Letní semestr (2019/2020)
 1. IBT - Bakalářská práce
@@ -108,11 +100,11 @@
 
 ## MITAI (2020/2021)
 1. [AVS - Architektury výpočetních systémů](MITAI/)
-   - Proj1 6/15
-   - Proj2 20/25
-2. [UPA - Ukládání a příprava dat](https://github.com/MWarCZ/UPA-project)
-   - Proj 20/20
-   - semi-team
+   - Hodnocení projektu č.1: 6/15
+   - Hodnocení projektu č.2: 20/25
+2. [UPA - Ukládání a příprava dat](https://github.com/xtrnen/UPA-project)
+   - Hodnocení projektu: 20/20
+   - [Můj fork](https://github.com/MWarCZ/UPA-project)
 
 
 # Přehled studia
