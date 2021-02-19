@@ -88,7 +88,7 @@
 ...
 
 ## BIT4 Zimní semestr (2019/2020)
-1. [IMS - Modelování a simulace](subjects/) 
+1. [IMS - Modelování a simulace](subjects/IMS) 
 	- Hodnocení projektu: 17/20
     - Téma projektu: 4. Uhlíková stopa v zemědělství, lesnictví a zpracovatelském průmyslu
 
