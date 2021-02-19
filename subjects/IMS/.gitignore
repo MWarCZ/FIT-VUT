@@ -1,0 +1,15 @@
+
+*.sublime-workspace
+*.sublime-project
+
+*.swp
+*.map
+*.log
+
+tmp/
+temp/
+
+build/
+dist/
+
+

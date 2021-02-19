@@ -1,0 +1,109 @@
+Architektury Výpočetních Systémů (AVS 2020)
+Projekt č. 2 (PMC)
+Login: xvalka05
+
+Úloha 1: Paralelizace původního řešení
+===============================================================================
+
+1) Kterou ze smyček (viz zadání) je vhodnější paralelizovat a co způsobuje 
+   neefektivitu paralelizaci té druhé?
+
+Dle mne (a výsledků pokusů) je vhodnější paralelizovat smýčku ve funkci `marchCubes` spíše než ve funkci `evaluateFieldAt`.
+Pravděpodobné důvody neefektivity paralelizované smyčky ve funkci `evaluateFieldAt` jsou:
+- Funkce je několikrát volána v rámci funkce `buildCube` na krátké výpočty a funkce `buildCube` je poté ve smyčce volána ve funkci `marchCubes`.
+- Režije kolem paralilizace procesů musí nastávat při každém volání funkce `evaluateFieldAt` a ve výsledku je tedy vliv na zrychlení minimální (Teoreticky může dojít i ke zhoršení).
+   - Jeden hlavní proces obstarává téměř vše a paralelizace probíhá jen na malém úseku, který je výpočetně méně náročný než úseky obstarávané hlavním procesem.
+
+Funkce `evaluateFieldAt` by mohla jít potencionálně urychlit. Domnívám se, že zde může docházet k problému s lokalitou dat (Místo přístupu k datům v `pPoints` přes pole struktur zkusit spíše strukturu polí).
+
+
+2) Jaké plánování (rozdělení práce mezi vlákna) jste zvolili a proč? 
+   Jaký vliv má velikost "chunk" při dynamickém plánování (8, 16, 32, 64)?
+
+Při pokusech s různými způsoby plánování (static, dynamic, guided) vycházelo plánování dynamic nejhůře. Plánování static a guided dosahovali srovnatelných výsledků.
+Na závěr jsem se rozhodl použít plánování guided, které dle mne ideálně rozloží zátěž na vlákna a přitom nemá, tak velkou režiji jako plánování dynamic (U plánování static dle mne byla náhoda, že výsledky vycházely srovnatelně.).
+
+Při dynamickém plánování měla nejvyšší hodnota "chunk" problém s ne příliž dobře rozloženou prací mezi vlákna. Oproti tomu výsledky s nejnižší hodnotou "chunk" nepřinesly očekávané zrychlení a nejspíše zde nastával problém s režijí při synchronizaci. (S hodnotou 32 byla srovnatelná se static a guided)
+
+
+3) Jakým způsobem zajišťujete ukládání trojúhelníků z několika vláken současně?
+
+Ve funkci `emitTriangle` jsem chěl přidat pragmu `pragma atomic ...`, ale bohužel pro mne ji nelze aplikovat na volání funkce (`push_back`). 
+Proto jsem ji nahradil za pragmu pro vytvoření kritické sekce (`pragma omp critical`). 
+Ta by měla zajistit, že jen jeden jediný proces bude v daný okamžik moci přidat nový trojúhelník (Samozřejmě zde vzniká místo, kde na sebe procesy musí čekat, ale to se snad nebude stávat tak často.). 
+
+
+Úloha 2: Paralelní průchod stromem
+===============================================================================
+
+1) Stručně popište použití OpenMP tasků ve vašem řešení. (Úloha = Task)
+
+K paralelizaci výpočtů dochází během vykonávání funkce `marchCubes`. 
+Konkrétně před tím než funkce volá funkci `marchCubesHelper` a zároveň bylo zajištěno, aby ji dostalo na starosti jen jedno vlákno (Ostatní vlákna čekají na úlohy, které budou vygenerovány).
+
+Funkce `marchCubesHelper` nejprve ověří, zda podprostorem předané krychle může procházet hledaný povrch, následně se otestuje velikost strany krychle a v přídadě dosažení minimální velkosti dojde k volání a vrácení návratové hodnoty funkce `buildCube`.
+
+Pokud žádná z podmínek nebyla naplněna, tak dojde k rozdělění problému na 8 úloh. Každá úloha si vypočte podprostor krychle se kterou bude dále pracovat a zavolá rekurzivně funkci `marchCubesHelper`.
+Mezivýsledek rekurzivně zavolané funkce je uložen do přidělené promněné.
+Na závěr musí dojít k sečtení mezivýsledků a vrácení výsledné hodnoty.
+Mezivýsledky jsou známi až je splněno všech 8 vytvořených úloh, takže pomocí pragmy `taskwait` je čekáno na splnění všech 8 úloh.
+
+
+2) Jakým způsobem jste realizovali sesbírání celkového počtu trojúhelníků?
+
+Funkce `marchCubesHelper` vrací počet sesbíraných trojúhelníků.
+Tato funkce volá rekurzivně sama sebe a díky tomu sbírá mezivýsledky.
+Mezivýsledky jsou získávány paralelně a až jsou k dispozici všechny potřebné, tak dojde k jejich sečtení a vrácení funkcí.
+Aby nedocházelo k nekonečné rekurzi, tak existují podmínky narušující rekurzi.
+
+
+3) Jaký vliv má na vaše řešení tzv. "cut-off"? Je vhodné vytvářet nový 
+   task pro každou krychli na nejnižší úrovni?
+
+Jako hanici pro přerušení rekurze jsem zvolil test na délku strany krychle. Při dosažení strany 1 nebo menší dojde k sestavení trajúhelníku krychle.
+(Bohužel volitelný "cut-off" na nastavení maximální hloubky zanoření rekurze se mi nepodařilo zprovoznit. Původní idela byla výpočíst minimální velikosti dosažitelné hrany pro nejnižší povolenou úroveň zanoření MIN_CUBE_SIZE = mGridSize / 8^UROVEN_ZANORENI, ale asi špatná myšlenka takže místo výpočtu MIN_CUBE_SIZE je v podmínce natvrdo hodnota 1.)
+
+Lituji, ale při testování zda vytváření úloh pro krychle na nejnižší úrovni má nějaký výrazný vliv na rychlost zpracování, dospěl jsem k závěru, že namají žádný výrazně pozorovatelný vliv.
+(Větší vliv na rychlost vykonání měla spíše volba sdílených proměných u úloh.)
+
+4) Jakým způsobem zajišťujete ukládání trojúhelníků z několika vláken současně?
+
+Stejně jako u úlohy 1. (viz. odpověd Úloha 1.3)
+
+
+Úloha 3: Předvýpočet hodnot pole
+===============================================================================
+
+1) Dochází v případě tohoto řešení k omezení výkonu propustností paměti? 
+   Došlo k nějakým změnám ve využití paměťového subsystému v porovnání 
+   s úlohou 1?
+   (Ověřte nástrojem Intel VTune na některé z větších mřížek -- např. 512)
+
+// TODO
+
+2) V jaké situaci bude toto řešení nejvýhodnější (nejrychlejší)?
+
+// TODO
+
+Úloha 4: Grafy škálování všech řešení
+===============================================================================
+
+1) Stručně zhodnoťte efektivitu vytvořených řešení (na základě grafů škálování).
+
+Průběh grafů (dle očekávání) je lineárně rostoucí (až na malou vyjímku).
+Vyjímkou je bod zlomu v efektivnosti výpočtů u algoritmu Octree.
+Z grafu lze vyčíst, že Octree je efektivnější pro výpočty s vyšším počtem bodů a Loop dominuje u nižších počtů bodů (Cache variantu nemám tj. nemohu porovnat s jejím průběhem.)
+Hlavní rozdíl v rychlosti dle mne zde zapříčiňuje "test na průchod krychlí", kde pro velká množství bodů je možné řadu krychlí vyloučit z průchodu u Octree oproti Loop, kde se musí projít všechny části. Ale zároveň to sebou nese režiji navíc a u malých počtů bodů to zapříčiňuje menší efektivitu Octree.
+
+
+2) V jakém případě (v závislosti na počtu bodů ve vstupním souboru a velikosti 
+   mřížky) bude vaše řešení 1. úlohy neefektivní? (pokud takový případ existuje)
+
+Já se domníval, že pro malé vstupní soubory a velký počet vláken bude program neefektivní, ale bohužel graf moji domněnku příliž nepotvrzuje. 
+(Testy jsem vyhodnocoval víckrát, ale odevzdaný graf je jediný graf, kde se to alespoň trochu projevilo. Nevím, kde je chyba, že ta efektivita pro velký počet vláken neklesá.)
+
+
+3) Je (nebo není) stromový algoritmus efektivnější z pohledu slabého škálování 
+   vzhledem ke vstupu?
+
+Není efektivnější z pohledu slabého škálování vzhledem ke vstupu.

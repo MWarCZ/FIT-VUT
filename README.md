@@ -15,7 +15,6 @@
 	- [BIT4 Letní semestr (2019/2020)](#bit4-letní-semestr-20192020)
 	- [MITAI (2020/2021)](#mitai-20202021)
 - [Přehled studia](#přehled-studia)
-	- [xxx](#xxx)
 
 # Některé mé projekty
 
@@ -39,34 +38,35 @@
 	- Hodnocení projektu č.2: 46/52 (kalkulacka)
 
 ## BIT2 Zimní semestr (2017/2018)
-1. [IAL - Algoritmy](subjects/)
-	- Hodnocení projektu: Společný s IFJ 9/10 + 5/5 obhaj
+1. [IAL - Algoritmy](subjects/IAL)
 	- DÚ č.1: 8/10
 	- DÚ č.2: 10/10
-1. [IFJ - Formální jazyky a překladače](https://github.com/MWarCZ/IFJ17)
-	- Hodnocení projektu: 15/15 + 4/5 doku + 5/5 obhaj + 0/5 bonus
+	- Hodnocení projektu: 9/10 (Algoritmi a ADT) + 5/5 (Obhajoba)
+	- > Projekt byl společný s předmětem IFJ
+2. [IFJ - Formální jazyky a překladače](https://github.com/MWarCZ/IFJ17)
+	- Hodnocení projektu: 15/15 + 4/5 (Dokumentace) + 5/5 (Obhajoba) + 0/5 (Bonus)
 	- Téma projektu: IFJcode17
-1. [INP - Návrh počítačových systémů](subjects/)
+3. [INP - Návrh počítačových systémů](subjects/INP)
 	- Hodnocení projektu č.1: 10/10
 	- Hodnocení projektu č.2: 23/23
-1. [ISS - Signály a systémy](subjects/)
+1. [ISS - Signály a systémy](subjects/ISS)
 	- Hodnocení projektu: 10.5/12
-1. [IPA - Pokročilé asemblery](subjects/)
+1. [IPA - Pokročilé asemblery](subjects/IPA)
 	- Hodnocení projektu: 22/24
 	- Téma projektu: Hra - strelba **
 
 ## BIT2 Letní semestr (2017/2018)
-1. [IDS - Databázové systémy](subjects/)
+1. [IDS - Databázové systémy](subjects/IDS)
 	- Hodnocení projektu: 5/5 + 5/5 + 5/5 + 16/19 (max 34)
-1. [IPK - Počítačové komunikace a sítě](subjects/)
+1. [IPK - Počítačové komunikace a sítě](subjects/IPK)
 	- Hodnocení projektu č.1: 18/20
 	- Téma projektu č.1: Klient-server pro získání informace o uživatelích (Ryšavý)
 	- Hodnocení projektu č.2: 11/20
 	- Téma projektu č.2: Bandwidth Measurement (Ryšavý)
-1. [IPP - Principy programovacích jazyků a OOP]([subjects/](https://gitlab.com/MWarCZ/IPPcode18))
-	- Hodnocení projektu: 6/6 + 11/14 + bonus 1/5 
+2. [IPP - Principy programovacích jazyků a OOP](https://gitlab.com/MWarCZ/IPPcode18)
+	- Hodnocení projektu: 6/6 (Část 1) + 11/14 (Část 2) + 1/5 (Bonus) 
 	- Téma projektu: IPPcode18
-1. [IZG - Základy počítačové grafiky](subjects/)
+3. [IZG - Základy počítačové grafiky](subjects/IZG)
 	- Hodnocení projektu: 11.3/18
 2. [IJA - Seminář Java](https://github.com/MWarCZ/IJA)
 	- Hodnocení projektu: 80/94
@@ -74,13 +74,13 @@
 ## BIT3 Zimní semestr (2018/2019)
 1. [IIS - Informační systémy](https://github.com/MWarCZ/iis)
 	- Hodnocení projektu: 30/30
-2. [IMP - Mikroprocesorové a vestavěné systémy](subjects/)
+2. [IMP - Mikroprocesorové a vestavěné systémy](subjects/IMP)
 	- Hodnocení projektu: 14/14
 	- Téma projektu: ESP8266: ovládání LED (IoT, WiFi AP pro mobilní telefon)
-2. [ITU - Tvorba uživatelských rozhraní](subjects/)
+2. [ITU - Tvorba uživatelských rozhraní](subjects/ITU)
 	- Hodnocení projektu: 42/55
 	- Téma projektu: Vizualizace workflow 
-2. [ISA - Síťové aplikace a správa sítí](subjects/)
+2. [ISA - Síťové aplikace a správa sítí](subjects/ISA)
 	- Hodnocení projektu: Proj 17/20
 	- Téma projektu: Nástroje monitorující a generující zprávy jednoduchých distance-vector protokolů (Dr. Veselý)
 
@@ -88,7 +88,7 @@
 ...
 
 ## BIT4 Zimní semestr (2019/2020)
-1. [IMS - Modelování a simulace](subjects/) 
+1. [IMS - Modelování a simulace](subjects/IMS) 
 	- Hodnocení projektu: 17/20
     - Téma projektu: 4. Uhlíková stopa v zemědělství, lesnictví a zpracovatelském průmyslu
 
@@ -99,7 +99,7 @@
    - [Zdrojové kódy pro frontend](https://github.com/MWarCZ/MWEClient)
 
 ## MITAI (2020/2021)
-1. [AVS - Architektury výpočetních systémů](MITAI/)
+1. [AVS - Architektury výpočetních systémů](subjects/AVS)
    - Hodnocení projektu č.1: 6/15
    - Hodnocení projektu č.2: 20/25
 2. [UPA - Ukládání a příprava dat](https://github.com/xtrnen/UPA-project)
@@ -108,8 +108,5 @@
 
 
 # Přehled studia
-> Sceeen z [WISu](https://wis.fit.vutbr.cz/FIT/)
 
-![Přehled_studia_na_FIT](img/wis-2.png)
-
-## xxx
+Viz. [screenshoty](img/) z WISu (informační systém FIT) a ze STUDISu (informační systém VUT) 

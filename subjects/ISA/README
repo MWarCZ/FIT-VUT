@@ -1,0 +1,154 @@
+//////////////////////////////////////////
+//                                     //
+// Projekt: ISA RIP                   //
+// Soubor: README                    //
+// Autor: Miroslav Valka (xvalka05) //
+//                                 //
+////////////////////////////////////
+
+Aplikace pro monitorovani RIP komunikace
+========================================
+
+myripsniffer
+============
+
+Popis:
+------
+  Aplikace analyzuje pakety protokolu RIPv1, RIPv2 a RIPng.
+  Nasledne vypisuje informace o danych paketech.
+
+Omezeni:
+--------
+  - Aplikaci je nutne spoustet jako root uzivatel.
+  - Aplikace si neporadi s IPv6 rozsirujicimi hlavickami. (IPv6 Extension Headers)
+  - Aplikace nevypisuje info o autentizaci pro RIPv2 pakety s MD5 autentikaci. (Keyed Message Digest)
+  - ...
+
+Pouziti:
+--------
+```
+./myripsniffer -i <rozhrani> {-E} {-I} {-U}
+./myripsniffer -f <soubor.pcap> {-E} {-I} {-U}
+./myripsniffer -h
+```
+  - -i <rozhrani>
+    - Rozhrani sitove karty na kterem se bude naslouchat.
+    - Nelze kombinovat s -f.
+  - -f <soubor.pcap>
+    - Nazev soboru obsahujici zachycenou sitovou komunikaci.
+    - Nelze kombinovat s -i.
+  - -E
+    - Budou se vypisovat i nektere informace z eternetove hlavicky.
+  - -I
+    - Budou se vypisovat i nektere informace z ip hlavicky.
+  - -U
+    - Budou se vypisovat i nektere informace z udp hlavicky.
+  - -h 
+    - Vypise napovedu.
+
+Priklady pouziti:
+-----------------
+  1) `sudo ./myripsniffer -i eth0`
+  2) `sudo ./myripsniffer -f rip.pcap`
+  3) `sudo ./myripsniffer -i eth0 -EIU`
+
+Priklady vystupu:
+-----------------
+	- RIPv1
+```
+>====> START PACKET <====<
+==== RIPv1  Response ====
+  [Route (Family/Tag - 0/0)]
+      IP Addres: 10.0.0.0
+         Metric: 1
+  [Route (Family/Tag - 0/0)]
+      IP Addres: 10.1.0.0
+         Metric: 1
+>====> END PACKET <====<
+```
+	- RIPv2
+```
+>====> START PACKET <====<
+==== RIPv2  Response ====
+  [Authentication (Type - Plain-text password)]
+      Password: ISA>28b13e584d1
+  [Route (Family/Tag - 2/0)]
+      IP Addres: 10.48.53.0
+    Subnet Mask: 255.255.255.0
+       Next Hop: 0.0.0.0
+         Metric: 1
+  [Route (Family/Tag - 2/0)]
+      IP Addres: 10.97.107.0
+    Subnet Mask: 255.255.255.0
+       Next Hop: 0.0.0.0
+         Metric: 1
+>====> END PACKET <====<
+```
+	- RIPng
+```
+>====> START PACKET <====<
+==== RIPng Response ====
+  [Route (Tag - 0)]
+    IP Address: fd00::/64
+        Metric: 1
+  [Route (Tag - 0)]
+    IP Address: fd00:cd:2d78::/64
+        Metric: 1
+  [Route (Tag - 0)]
+    IP Address: fd00:9f0:1415::/64
+        Metric: 1
+>====> END PACKET <====<
+```
+
+
+Aplikace pro podvrhavani RIPng Response
+=======================================
+
+myripresponse
+=============
+
+Popis:
+------
+	Aplikace umi podvrhnout paket RIPng Response.
+
+Omezeni:
+--------
+  - Aplikaci je nutne spoustet jako root uzivatel.
+  - ...
+
+Pouziti:
+--------
+```
+./myripresponse -i <rozhrani> -r <IPv6>/[16-128] {-n <IPv6>} {-m [0-16]} {-t [0-65535]}
+./myripresponse -h
+```
+  - -i <rozhrani>
+    - Rozhrani sitove karty, ze ktereho je odesilan paket.
+  - -r <IPv6>/[16-128] 
+		- Nastaveni podvrhavane routy.
+		- Format hodnoty je IPv6 adresa site lomeno prefix site.
+		- pr. fd00:9f0:1415::/64
+	- -n <IPv6> 
+    - Zadani adresy pro next-hop.
+  - -m [0-16]
+    - Zadani metriky.
+  - -h 
+    - Vypsani napovedy.
+
+
+Priklady pouziti:
+-----------------
+  1) `sudo ./myripresponse -i wlan0 -r 2001:db8:0:abcd::/64`
+
+
+Seznam odevzdanych souboru:
+===========================
+
+  - riplib.h
+  - myripsniffer.c
+  - myripresponse.c
+  - Makefile
+  - README
+  - manual.pdf
+
+// Soubor: README

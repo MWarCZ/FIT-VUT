@@ -10,6 +10,9 @@
 - [Klientská aplikace](#client)
 - [Kompilace](#make)
 - [Známé chyby](#errors)
+
+> Zadání projektu k nalezení [zde](zadani1.md).
+> Vicero informaci o aplikaci [zde](dokumentace.md).
 ---
 
 ## <a id="server"></a> Serverová aplikace
