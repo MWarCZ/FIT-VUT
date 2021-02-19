@@ -58,12 +58,12 @@
 ## BIT2 Letní semestr (2017/2018)
 1. [IDS - Databázové systémy](subjects/)
 	- Hodnocení projektu: 5/5 + 5/5 + 5/5 + 16/19 (max 34)
-1. [IPK - Počítačové komunikace a sítě](subjects/)
+1. [IPK - Počítačové komunikace a sítě](subjects/IPK)
 	- Hodnocení projektu č.1: 18/20
 	- Téma projektu č.1: Klient-server pro získání informace o uživatelích (Ryšavý)
 	- Hodnocení projektu č.2: 11/20
 	- Téma projektu č.2: Bandwidth Measurement (Ryšavý)
-1. [IPP - Principy programovacích jazyků a OOP]([subjects/](https://gitlab.com/MWarCZ/IPPcode18))
+2. [IPP - Principy programovacích jazyků a OOP](https://gitlab.com/MWarCZ/IPPcode18)
 	- Hodnocení projektu: 6/6 + 11/14 + bonus 1/5 
 	- Téma projektu: IPPcode18
 1. [IZG - Základy počítačové grafiky](subjects/IZG)
