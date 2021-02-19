@@ -80,7 +80,7 @@
 2. [ITU - Tvorba uživatelských rozhraní](subjects/)
 	- Hodnocení projektu: 42/55
 	- Téma projektu: Vizualizace workflow 
-2. [ISA - Síťové aplikace a správa sítí](subjects/)
+2. [ISA - Síťové aplikace a správa sítí](subjects/ISA)
 	- Hodnocení projektu: Proj 17/20
 	- Téma projektu: Nástroje monitorující a generující zprávy jednoduchých distance-vector protokolů (Dr. Veselý)
 
