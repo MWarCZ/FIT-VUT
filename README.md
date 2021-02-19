@@ -66,7 +66,7 @@
 1. [IPP - Principy programovacích jazyků a OOP]([subjects/](https://gitlab.com/MWarCZ/IPPcode18))
 	- Hodnocení projektu: 6/6 + 11/14 + bonus 1/5 
 	- Téma projektu: IPPcode18
-1. [IZG - Základy počítačové grafiky](subjects/)
+1. [IZG - Základy počítačové grafiky](subjects/IZG)
 	- Hodnocení projektu: 11.3/18
 2. [IJA - Seminář Java](https://github.com/MWarCZ/IJA)
 	- Hodnocení projektu: 80/94
