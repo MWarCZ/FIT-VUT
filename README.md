@@ -104,7 +104,8 @@
    - Hodnocení projektu č.2: 20/25
 2. [UPA - Ukládání a příprava dat](https://github.com/xtrnen/UPA-project)
    - Hodnocení projektu: 20/20
-   - [Můj fork](https://github.com/MWarCZ/UPA-project)
+   - [Můj klon na GitLabu](https://gitlab.com/MWarCZ/upa-project)
+   - [Můj fork na GitHubu](https://github.com/MWarCZ/UPA-project)
 
 
 # Přehled studia
